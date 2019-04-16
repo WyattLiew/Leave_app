@@ -49,7 +49,7 @@ render() {
                                 <DropdownToggle nav caret>Profile</DropdownToggle>
                                 <DropdownMenu>
                                 <DropdownItem header>Personal</DropdownItem>
-                                <DropdownItem href="/">History</DropdownItem>
+                                <DropdownItem href="/HistoryPage">History</DropdownItem>
                                 <DropdownItem>Settings</DropdownItem>
                                 <DropdownItem divider />
                                 <DropdownItem>Signout</DropdownItem>

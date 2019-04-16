@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as moment from 'moment';
 import {
     Table
 } from 'reactstrap';
@@ -26,6 +27,7 @@ class LeavePage extends Component {
           .then(response => this.setState({ leaves: response.data}))
           .catch(err=>console.error(err));
       }
+
     
     //   getLeaves = _ => {
     //     fetch('http://localhost:3000/api/get_all_leaves')
@@ -80,18 +82,21 @@ render() {
                     <th>Remaining</th>
                 </tr>
                 </thead>
-                {this.state.leaves.map(leave=>
-                 <tbody key={leave.leave_balance_id} id={leave.leave_balance_id}>
+                {this.state.leaves.map(leave =>  
+                
+                <tbody key={leave.leave_balance_id} id={leave.leave_balance_id}>
                  <tr>
-                     <td>{leave.employee_id}</td>
-                     <td>{leave.leave_type_code}</td>
-                     <td>{leave.year_number}</td>
-                     <td>{leave.updated}</td>
-                     <td>{leave.leave_balance}</td>
-                     <td>{leave.leave_taken}</td>
-                     <td>{leave.leave_remaining}</td>
+                    <td>{leave.employee_id}</td>
+                    <td>{leave.leave_type}</td>
+                    <td>{leave.year_number}</td>
+                    <td>{moment(leave.updated).format("LL")}</td>
+                    <td>{leave.leave_balance}</td>
+                    <td>{leave.leave_taken}</td>
+                    <td>{leave.leave_remaining}</td>
                  </tr>
-                </tbody>)}
+                
+                </tbody>
+                )}
             </Table>
     );
 }
