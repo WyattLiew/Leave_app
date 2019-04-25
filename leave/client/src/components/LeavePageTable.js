@@ -10,23 +10,31 @@ class LeavePage extends Component {
         super();
         this.state = {
           leaves:[],
-          id:`${1}`
+          id:`${0}`
         }
       }
     
       componentDidMount() {
-        this.getLeaves(this.state.id);
+        this.getUserId();
+        //this.getLeaves(this.state.id);
       }
 
+      // get leave balance
       getLeaves = (id) => {
         fetch(`http://localhost:3000/api/get_leaves/${id}`)
-          .then(response => response.json())
-          // .then(({data})=>{
-          //   console.log(data);
-          // })
+        .then(response => response.json())
           .then(response => this.setState({ leaves: response.data}))
-          .catch(err=>console.error(err));
+          .catch(err=>console.error("Get error"+err));
       }
+
+      // get user id
+      getUserId = _ => {
+        fetch(`/api/check_user_id`).then(response => response.json())
+        .then(response => this.setState({ id: response.data},()=>{
+          this.getLeaves(this.state.id)
+        }))
+        .catch(err=>console.error(err));
+    }
 
     
     //   getLeaves = _ => {

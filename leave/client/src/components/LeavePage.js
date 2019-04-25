@@ -35,12 +35,12 @@ class LeavePage extends Component {
           balance:0,
           taken:0,
           remaining:0,
-          id:`${1}`
+          id:0
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChangeStart = this.handleChangeStart.bind(this);
         this.handleChangeEnd = this.handleChangeEnd.bind(this);
-        //this.handleChangeCheckHalfDay = this.handleChangeCheckHalfDay.bind(this);
+        this.handleChangeCheckHalfDay = this.handleChangeCheckHalfDay.bind(this);
         this.handleChangeDays = this.handleChangeDays.bind(this);
         this.handleChangeLeaveType = this.handleChangeLeaveType.bind(this);
         this.handleChangeReason = this.handleChangeReason.bind(this);
@@ -49,6 +49,8 @@ class LeavePage extends Component {
 
     componentDidMount() {
         this.getDaysCount();
+        this.getLoginStatus();
+        this.getUserId();
     }
     
     // Start date handler
@@ -157,7 +159,6 @@ class LeavePage extends Component {
         console.log("Seconds:", diffDuration.seconds());
        
         var totalDays = diffDuration.days();
-        console.log(totalDays);
         console.log("Days:", moment(startDate).days());
 
         //this.getBalance();
@@ -170,7 +171,6 @@ class LeavePage extends Component {
         }
        // Check is Half day?
        if(diffDuration.days() === 0 && timeEnd!=null) {
-        console.log("one or half day");
         if(!this.state.isHalfDayChecked){
             this.setState({            
                 daysCount: 1
@@ -196,16 +196,14 @@ class LeavePage extends Component {
         }
     }
 
-    
 
-
-
+    // Submit handler
     handleSubmit(event) {
-        //event.preventDefault();
         // Calculation of Leave taken and remaining
         var calTakenLeave = Number(this.state.taken);
         var calRemainingLeave = Number(this.state.remaining);
         var calDaysCount = Number(this.state.daysCount);
+        var leaveTypeSelected = this.state.leaveTypeValue;
         //var calLeaveBalance = Number(this.state.balance);
 
         let totalDaysTaken = calTakenLeave + calDaysCount;
@@ -214,29 +212,60 @@ class LeavePage extends Component {
         
         console.log("Taken"+totalDaysTaken);
         console.log("Remaining"+totalDaysRemaining);
+        console.log("leave_type "+leaveTypeSelected);
         
-
-        this.setState({
-            taken: totalDaysTaken,
-            remaining: totalDaysRemaining
-        },()=>{
-            var data = {
-                balanceID: this.state.balanceID,
-                leaveType: this.state.leaveTypeValue,
-                fromDate: this.state.fromLeave,
-                toDate: this.state.toLeave,
-                reason: this.state.reason,
-                days:this.state.daysCount,
-                currentDate: this.state.currentDate,
-                taken: this.state.taken,
-                remaining:this.state.remaining
-            };
-            fetch('/apply-leave',{
-                method:'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data)
-            })
-        });
+        if(calDaysCount>calRemainingLeave && leaveTypeSelected !=="7") {
+            event.preventDefault();
+            alert("Please make sure you have enough leave to take.");
+        }else if(leaveTypeSelected ==="7") {
+            this.setState({
+                taken: totalDaysTaken,
+                remaining: 0,
+                balance:0
+            },()=>{
+                var data = {
+                    balanceID: this.state.balanceID,
+                    leaveType: this.state.leaveTypeValue,
+                    fromDate: this.state.fromLeave,
+                    toDate: this.state.toLeave,
+                    reason: this.state.reason,
+                    days:this.state.daysCount,
+                    currentDate: this.state.currentDate,
+                    taken: this.state.taken,
+                    remaining:this.state.remaining,
+                    id:this.state.id
+                };
+                fetch('/apply-leave',{
+                    method:'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                })
+            });
+        }else{
+            this.setState({
+                taken: totalDaysTaken,
+                remaining: totalDaysRemaining
+            },()=>{
+                var data = {
+                    balanceID: this.state.balanceID,
+                    leaveType: this.state.leaveTypeValue,
+                    fromDate: this.state.fromLeave,
+                    toDate: this.state.toLeave,
+                    reason: this.state.reason,
+                    days:this.state.daysCount,
+                    currentDate: this.state.currentDate,
+                    taken: this.state.taken,
+                    remaining:this.state.remaining,
+                    id:this.state.id
+                };
+                fetch('/apply-leave',{
+                    method:'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                })
+            });
+        }
+        
 
 
         //     console.log(this.state.taken,this.state.remaining);
@@ -264,8 +293,6 @@ class LeavePage extends Component {
         //         // })
         //     })
         // });
-        
-        console.log(this.state.taken,this.state.remaining);
     }
 
     getLeaves = (id,leaveType) => {
@@ -276,8 +303,24 @@ class LeavePage extends Component {
         //   })
           .then(response => this.setState({ leavesBalance: response.data},()=>{
               this.getBalance();
-          }))
+          })).catch(err=>console.error(err));
+    }
+
+    getLoginStatus = _ => {
+        fetch(`/api/get_account_valification`)
+          .then(response => {
+              if(response.ok && window){
+                window.location.href="/login";
+              }
+            })
           .catch(err=>console.error(err));
+    }
+
+    getUserId = _ => {
+        fetch(`/api/check_user_id`).then(response => response.json())
+        .then(response => this.setState({ id: response.data},()=>{console.log(this.state.id);
+        }))
+        .catch(err=>console.error(err));
     }
     
 render() {
@@ -286,7 +329,7 @@ render() {
             <div>
             <h2><Button color="dark" onClick={this.applyToggle}>Apply</Button>  Leave Balance</h2>
                 <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-                <Form onSubmit={this.handleSubmit} >
+                <Form onSubmit={this.handleSubmit}>
                     <ModalHeader toggle={this.toggle} charCode="Y">Apply for a leave</ModalHeader>
                     <ModalBody>
                     <FormGroup row>
@@ -335,7 +378,7 @@ render() {
                         <Col sm={{ size: 8 }}>
                             <FormGroup check>
                             <Label check>
-                                <Input type="checkbox" id="isHalfday" checked={this.state.isHalfDayChecked} onChange={this.handleChangeCheckHalfDay} />{' '}
+                                <Input type="checkbox" id="isHalfday" checked={this.state.isHalfDayChecked} onChange={this.handleChangeCheckHalfDay} disabled={this.state.fromLeave===this.state.toLeave ? false : true}/>{' '}
                                 Half day?
                             </Label>
                             </FormGroup>
@@ -364,6 +407,7 @@ render() {
                     <Input type="number" step="any" name="remaining" value={this.state.remaining} readOnly/>
                     <Input type="text" name="currentDate" value={moment(this.state.currentDate).format("LL")} readOnly/>
                     <Input type="text" name="balanceID" value={this.state.balanceID} readOnly/>
+                    <Input type="text" name="id" value={this.state.id} readOnly/>
                 
                     </ModalBody>
                     <ModalFooter>
