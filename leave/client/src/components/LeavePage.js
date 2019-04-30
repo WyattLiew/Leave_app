@@ -310,7 +310,7 @@ class LeavePage extends Component {
         fetch(`/api/get_account_valification`)
           .then(response => {
               if(response.ok && window){
-                window.location.href="/login";
+                window.location.href="/";
               }
             })
           .catch(err=>console.error(err));

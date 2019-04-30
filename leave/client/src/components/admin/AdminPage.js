@@ -21,6 +21,7 @@ class AdminPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+          isAdmin:false,
           modal: false,
           showError:0,
           isAdminChecked: false,
@@ -50,7 +51,6 @@ class AdminPage extends Component {
 
     componentDidMount() {
         this.getLoginStatus();
-        
     }
 
     // Start date handler
@@ -174,14 +174,15 @@ class AdminPage extends Component {
 
     // Check Login status
     getLoginStatus = _ => {
-        fetch(`/api/get_account_valification`)
+        fetch(`/api/get_account_valification_admin`)
           .then(response => {
               if(response.ok && window){
-                window.location.href="/login";
+                window.location.href="/";
               }
             })
           .catch(err=>console.error(err));
     }
+
     
 render() {
     return (

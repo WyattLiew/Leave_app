@@ -31,7 +31,7 @@ module.exports = function(passport){
                 }
                 else if (isMatch){
                     console.log("done!!");
-                    return done(null,{isUser:isMatch,isAdmin:result.rows[0].isadmin,userId:result.rows[0].id});
+                    return done(null,{isUser:isMatch,isAdmin:result.rows[0].isadmin,userId:result.rows[0].id,isManagement:result.rows[0].ismanagement});
                 }else{
                     console.log('invalid password');
                     return done(null,{isUser:false});

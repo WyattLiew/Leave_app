@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import AppNavbar from './components/AppNavbar';
+import MainDashboard from './components/dashboard/MainDashboard';
 import Login from './components/users/Login';
 import Admin from './components/admin/AdminPage';
 import LeavePage from './components/LeavePage';
@@ -40,10 +41,12 @@ class App extends Component {
       <Router>
       <div className="App">
       <AppNavbar/>
-        <Route exact path="/login" component={Login} />
-        <Route path="/Admin" component={Admin} />
+        <Route exact path="/" component={Login} />
+        <Route path="/MainDashboard" component={MainDashboard}/>
         <Route path="/LeavePage" component={LeavePage} />
         <Route path="/HistoryPage" component={HistoryPage} />
+
+        <Route path="/Admin" component={Admin}/>
         {/*{leaves.map(this.renderLeave)}*/}
       </div>
       </Router>

@@ -91,7 +91,7 @@ router.post('/login', passport.authenticate('local'),(req,res,next)=>{
         }else if(req.user.isUser && !req.user.isAdmin){
             res.redirect('/leavepage');
         }else{
-            res.redirect('/login');
+            res.redirect('/');
         }
      });
 
@@ -101,7 +101,7 @@ router.post('/login', passport.authenticate('local'),(req,res,next)=>{
 router.get('/logout', function(req,res){
     req.logout();
     console.log('success','you are logged out');
-    res.redirect('/login');
+    res.redirect('/');
 });
 
 module.exports = router;
