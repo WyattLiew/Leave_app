@@ -19,8 +19,8 @@ class App extends Component {
     }
   }
 
-  // componentDidMount() {
-  //   this.getLeaves();
+  // componentDidUpdate() {
+  //   this.getLoginStatus();
   // }
 
   // getLeaves = _ => {

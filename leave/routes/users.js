@@ -89,7 +89,7 @@ router.post('/login', passport.authenticate('local'),(req,res,next)=>{
         if(req.user.isUser && req.user.isAdmin){
            res.redirect('/admin');
         }else if(req.user.isUser && !req.user.isAdmin){
-            res.redirect('/leavepage');
+            res.redirect('/MainDashboard');
         }else{
             res.redirect('/');
         }

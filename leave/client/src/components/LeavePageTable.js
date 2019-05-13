@@ -78,10 +78,10 @@ class LeavePage extends Component {
 
 render() {
     return (
-        <Table bordered>
+        <Table>
             <thead>
                 <tr>
-                    <th>Employee Id</th>
+                    {/* <th>Employee Id</th> */}
                     <th>Leave Type</th>
                     <th>Year</th>
                     <th>Updated</th>
@@ -94,7 +94,7 @@ render() {
                 
                 <tbody key={leave.leave_balance_id} id={leave.leave_balance_id}>
                  <tr>
-                    <td>{leave.employee_id}</td>
+                    {/* <td>{leave.employee_id}</td> */}
                     <td>{leave.leave_type}</td>
                     <td>{leave.year_number}</td>
                     <td>{moment(leave.updated).format("LL")}</td>

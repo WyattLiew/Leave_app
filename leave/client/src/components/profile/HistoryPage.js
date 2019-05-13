@@ -28,13 +28,14 @@ class HistoryPage extends Component {
       }
     
       componentDidMount() {
+        this.getLoginStatus();
         this.getUserId();
         //this.getAllLeaves(this.state.id);
         
       }
 
       componentDidUpdate() {
-          this.getLoginStatus();
+        
         //this.getLeaveTakenHistory();
         //this.cancelToggle();
         //console.log("Updated: ","ID 2 "+this.state.employeeID,"LT "+this.state.leaveTypeCode,"DC "+this.state.daysCount, "LA "+this.state.leaveApproval);
@@ -46,7 +47,7 @@ class HistoryPage extends Component {
         fetch(`/api/get_account_valification`)
           .then(response => {
               if(response.ok && window){
-                window.location.href="/login";
+                window.location.href="/";
               }
             })
           .catch(err=>console.error(err));
@@ -97,7 +98,7 @@ class HistoryPage extends Component {
                 leaveApproval:leave.leave_approval_code
             },()=>{
                 this.getLeavesBalance(this.state.employeeID,this.state.leaveTypeCode);
-                console.log("ID "+this.state.employeeID,"LT "+this.state.leaveTypeCode,"DC "+this.state.daysCount, "LA "+this.state.leaveApproval);
+                //console.log("ID "+this.state.employeeID,"LT "+this.state.leaveTypeCode,"DC "+this.state.daysCount, "LA "+this.state.leaveApproval);
             })
         )
       }
@@ -184,27 +185,26 @@ class HistoryPage extends Component {
             <Container>
                 <h2>Leave History</h2>
                 <br></br>
-                <Table bordered>
+                <Table>
                     <thead>
                         <tr>
-                            <th>Employee Id</th>
+                            {/* <th>Employee Id</th> */}
                             <th>Leave Type</th>
-                            <th>From Date</th>
-                            <th>To Date</th>
+                            <th>Dates</th>
                             <th>Day(s) Applied</th>
                             <th>Reason</th>
-                            <th>Result</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         {this.state.leaves.map(leave =>  
                         
                         <tbody key={leave.leave_period_id} id={leave.leave_period_id}>
                         <tr>
-                            <td>{leave.employee_id}</td>
+                            {/* <td>{leave.employee_id}</td> */}
                             <td>{leave.leave_type}</td>
-                            <td>{moment(leave.leave_from_date).format("LL")}</td>
-                            <td>{moment(leave.leave_to_date).format("LL")}</td>
-                            <td>{leave.number_of_days}</td>
+                            <td>{moment(leave.leave_from_date).format("DD MMM")} - {moment(leave.leave_to_date).format("DD MMM, YYYY")}</td>
+                            <td>{leave.number_of_days + " day(s)"}</td>
                             <td>{leave.reason}</td>
                             <td>{leave.leave_status}</td>
                             <td><Button color="danger" id={leave.leave_period_id} onClick={() => {if(window.confirm('Delete the item?')){this.cancelToggle(leave.leave_period_id)};}} hidden={leave.leave_approval_code===1 ? false : true}>Cancel</Button></td>

@@ -71,8 +71,10 @@ router.get('/api/get_leaves_balance/:id/:leaveType',function(req,res){
 // Apply leave
 router.post('/apply-leave',function(req,res){
     // connect to postgres 
-    pool.connect();
+
     console.log(req.body.reason);
+    console.log(req.body.fromDateMonth);
+    console.log(req.body.toDateMonth);
     console.log(req.body.fromDate);
     console.log(req.body.toDate);
     console.log(req.body.leaveType);
@@ -84,13 +86,28 @@ router.post('/apply-leave',function(req,res){
     console.log(req.body.id);
     const isapprove = 1;
 
-    pool.query('INSERT INTO leave_taken(employee_id,leave_type_code,leave_from_date,leave_to_date,number_of_days,reason,leave_approval_code) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING leave_period_id',
-    [req.body.id,req.body.leaveType,req.body.fromDate,req.body.toDate,req.body.days,req.body.reason,isapprove]);
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+        client.query('INSERT INTO leave_taken(employee_id,leave_type_code,leave_from_date,leave_to_date,number_of_days,from_month_year,to_month_year,reason,leave_approval_code) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING leave_period_id',
+        [req.body.id,req.body.leaveType,req.body.fromDate,req.body.toDate,req.body.days,req.body.fromDateMonth,req.body.toDateMonth,req.body.reason,isapprove],function(err, result) {
+            done();
+            if(err) {
+                return console.error('error running query', err);
+            }
+        });
+    });
 
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
     // Update leave Balance
-    pool.query('UPDATE leave_balance SET leave_taken =$1, leave_remaining =$2, updated =$3 WHERE employee_id =$4 AND leave_balance_id =$5',
-    [req.body.taken,req.body.remaining,req.body.currentDate,req.body.id,req.body.balanceID]);
-
+    client.query('UPDATE leave_balance SET leave_taken =$1, leave_remaining =$2, updated =$3 WHERE employee_id =$4 AND leave_balance_id =$5',
+    [req.body.taken,req.body.remaining,req.body.currentDate,req.body.id,req.body.balanceID],function(err, result) {
+        done();
+        if(err) {
+            return console.error('error running query', err);
+        }
+    });
+});
     res.redirect('/');
     //pool.end();
 });
@@ -101,12 +118,48 @@ router.post('/apply-leave',function(req,res){
  * 
  */
 
+ // get indivisual leave balance details
+router.get('/api/get_main_leaves_balance/:id/:leaveType',function(req,res){
+    // connect to postgres  
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+            client.query('SELECT * FROM leave_balance t1 inner JOIN employee t2 on t1.employee_id = t2.id WHERE employee_id =$1 AND leave_type_code =$2',[req.params.id,req.params.leaveType], function(err, result) {
+                done();
+                if(err) {
+                    return console.error('error running query', err);
+                }else{
+                    return res.json({
+                    data:result.rows
+                });
+            }
+        }); 
+    });
+});
+
  // get all leave taken
 router.get('/api/get_all_leaves_taken',function(req,res){
     // connect to postgres 
     pool.connect((err,client,done)=>{
         if(err) return console.error('error running query', err);
             client.query('SELECT * FROM leave_taken t1 inner JOIN leave_type t2 on t1.leave_type_code = t2.leave_type_code inner join leave_approval t3 on t1.leave_approval_code = t3.leave_approval_id inner join employee t4 on t1.employee_id = t4.id WHERE leave_approval_code =1 ', function(err, result) {
+                done();
+                if(err) {
+                    return console.error('error running query', err);
+                }else{
+                    return res.json({
+                    data:result.rows
+                });
+            }
+        }); 
+    });
+});
+
+ // get all leave taken by month
+ router.get('/api/get_all_leaves_taken_by_month/:month',function(req,res){
+    // connect to postgres 
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+            client.query('SELECT * FROM leave_taken t1 inner JOIN leave_type t2 on t1.leave_type_code = t2.leave_type_code inner join leave_approval t3 on t1.leave_approval_code = t3.leave_approval_id inner join employee t4 on t1.employee_id = t4.id WHERE (leave_approval_code =2) AND (from_month_year =$1 OR to_month_year =$2)',[req.params.month,req.params.month], function(err, result) {
                 done();
                 if(err) {
                     return console.error('error running query', err);
@@ -128,10 +181,18 @@ router.post('/api/update_leaves_taken_approval',function(req,res){
     
     console.log("ID "+req.body.employeeID);
 
-    pool.connect();
-    pool.query('UPDATE leave_taken SET leave_approval_code =$1 WHERE employee_id =$2 AND leave_period_id =$3',
-    [req.body.leaveApprovalCode,req.body.employeeID,req.body.leavePeriodID]);
-    res.redirect('/');
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+        client.query('UPDATE leave_taken SET leave_approval_code =$1 WHERE employee_id =$2 AND leave_period_id =$3',
+        [req.body.leaveApprovalCode,req.body.employeeID,req.body.leavePeriodID], function(err, result) {
+            done();
+               if(err) {
+                    return console.error('error running query', err);
+                } else {
+                    res.redirect('/');
+            }
+        });
+    });
 });
 
 
@@ -189,18 +250,33 @@ router.post('/api/update_leaves_taken',function(req,res){
     console.log("BID "+req.body.balanceID);
     console.log("ID "+req.body.employeeID);
 
-    pool.connect();
-    pool.query('UPDATE leave_balance SET leave_taken =$1, leave_remaining =$2, updated =$3 WHERE employee_id =$4 AND leave_balance_id =$5',
-    [req.body.taken,req.body.remaining,req.body.currentDate,req.body.employeeID,req.body.balanceID]);
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+            client.query('UPDATE leave_balance SET leave_taken =$1, leave_remaining =$2, updated =$3 WHERE employee_id =$4 AND leave_balance_id =$5',
+            [req.body.taken,req.body.remaining,req.body.currentDate,req.body.employeeID,req.body.balanceID], function(err, result) {
+                done();
+                    if(err) {
+                        return console.error('error running query', err);
+                    }
+            });
+        });
     // res.redirect('/');
 });
 
 // Delete leave taken history (indivisual)
 router.delete('/api/delete_leaves_taken/:id',function(req,res){
     // connect to postgres 
-    pool.connect();
-    pool.query('DELETE FROM leave_taken WHERE leave_period_id = $1',[req.params.id]);
-    res.redirect('/');
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+        client.query('DELETE FROM leave_taken WHERE leave_period_id = $1',[req.params.id], function(err, result) {
+                done();
+                    if(err) {
+                        return console.error('error running query', err);
+                    } else {
+                        res.redirect('/');
+                    }
+            });
+        });
 });
 
 
@@ -221,8 +297,9 @@ router.get('/api/get_account_valification_admin',ensureAuthenticatedAdmin,functi
 
 // Check user status for nav bar
 router.get('/api/check_user_status',ensureAuthStatus,function(req,res){ 
-    console.log("Checking user status for nav bar");
-    return res.json();         
+        console.log("Checking user status for nav bar");
+        return res.json();  
+           
 });
 // Check user status for Admin nav bar
 router.get('/api/check_user_status_admin',ensureAuthStatusAdmin,function(req,res){ 
@@ -289,9 +366,13 @@ function ensureAuthenticatedAdmin(req,res,next){
 // Access Control for nav bar
 function ensureAuthStatus(req,res,next){
     if(req.isAuthenticated()){
-        if(!req.user.isAdmin){
+        if(!req.user.isAdmin && req.user.isUser){
+            // if(!req.user.isAuthenticated){
+            //     //
+            // }else{
         console.log("Nav bar showing now");
         return next();
+            //}
         }
     } else {
     console.log("Nav bar hidden");
@@ -302,7 +383,7 @@ function ensureAuthStatus(req,res,next){
 function ensureAuthStatusAdmin(req,res,next){
     if(req.isAuthenticated()){
         if(req.user.isAdmin){
-        console.log("Nav bar showing now");
+        console.log("Admin Nav bar showing now");
         return next();
         }
     } else {

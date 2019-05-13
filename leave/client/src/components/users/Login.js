@@ -28,6 +28,24 @@ class Login extends Component {
         this.handleChangePassword = this.handleChangePassword.bind(this);
     }
 
+    componentDidMount() {
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function () {
+        window.history.go(1);
+        };
+    }
+
+    // signout app
+    getLogout = _ => {
+        fetch(`/logout`)
+          .then(response => {
+              if(response.ok && window){
+                window.location.href="/";
+              }
+            })
+          .catch(err=>console.error(err));
+    }
+
     // Email handler
     handleChangeUsername(event) {
         this.setState({

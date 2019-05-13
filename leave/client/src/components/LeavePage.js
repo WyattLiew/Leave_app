@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as moment from 'moment';
+import SimpleReactValidator from 'simple-react-validator';
 import {
     Container,
     Form,
@@ -21,12 +22,13 @@ class LeavePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+          showError:0,
           modal: false,
           isHalfDayChecked: false,
           leaveTypeValue:0,
           currentDate: new Date(),
           fromLeave: new Date(),
-          toLeave:new Date(),
+          toLeave:"",
           msgWrongYear:"",
           daysCount: 0,
           reason:"",
@@ -37,6 +39,10 @@ class LeavePage extends Component {
           remaining:0,
           id:0
         }
+
+        // validator
+        this.validator = new SimpleReactValidator();
+
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChangeStart = this.handleChangeStart.bind(this);
         this.handleChangeEnd = this.handleChangeEnd.bind(this);
@@ -107,6 +113,7 @@ class LeavePage extends Component {
     // Apply leave button toggle
     applyToggle() {
         this.setState({
+            showError:0,
             daysCount: 0,
             leaveTypeValue:0,
             remaining:0,
@@ -157,6 +164,7 @@ class LeavePage extends Component {
         console.log("Hours:", diffDuration.hours());
         console.log("Minutes:", diffDuration.minutes());
         console.log("Seconds:", diffDuration.seconds());
+        console.log("Months:", startDate.format('M'));
        
         var totalDays = diffDuration.days();
         console.log("Days:", moment(startDate).days());
@@ -199,100 +207,90 @@ class LeavePage extends Component {
 
     // Submit handler
     handleSubmit(event) {
-        // Calculation of Leave taken and remaining
-        var calTakenLeave = Number(this.state.taken);
-        var calRemainingLeave = Number(this.state.remaining);
-        var calDaysCount = Number(this.state.daysCount);
-        var leaveTypeSelected = this.state.leaveTypeValue;
-        //var calLeaveBalance = Number(this.state.balance);
 
-        let totalDaysTaken = calTakenLeave + calDaysCount;
-        let totalDaysRemaining = calRemainingLeave - calDaysCount;
-        
-        
-        console.log("Taken"+totalDaysTaken);
-        console.log("Remaining"+totalDaysRemaining);
-        console.log("leave_type "+leaveTypeSelected);
-        
-        if(calDaysCount>calRemainingLeave && leaveTypeSelected !=="7") {
-            event.preventDefault();
-            alert("Please make sure you have enough leave to take.");
-        }else if(leaveTypeSelected ==="7") {
-            this.setState({
-                taken: totalDaysTaken,
-                remaining: 0,
-                balance:0
-            },()=>{
-                var data = {
-                    balanceID: this.state.balanceID,
-                    leaveType: this.state.leaveTypeValue,
-                    fromDate: this.state.fromLeave,
-                    toDate: this.state.toLeave,
-                    reason: this.state.reason,
-                    days:this.state.daysCount,
-                    currentDate: this.state.currentDate,
-                    taken: this.state.taken,
-                    remaining:this.state.remaining,
-                    id:this.state.id
-                };
-                fetch('/apply-leave',{
-                    method:'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                })
-            });
-        }else{
-            this.setState({
-                taken: totalDaysTaken,
-                remaining: totalDaysRemaining
-            },()=>{
-                var data = {
-                    balanceID: this.state.balanceID,
-                    leaveType: this.state.leaveTypeValue,
-                    fromDate: this.state.fromLeave,
-                    toDate: this.state.toLeave,
-                    reason: this.state.reason,
-                    days:this.state.daysCount,
-                    currentDate: this.state.currentDate,
-                    taken: this.state.taken,
-                    remaining:this.state.remaining,
-                    id:this.state.id
-                };
-                fetch('/apply-leave',{
-                    method:'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                })
-            });
-        }
-        
+        this.setState({
+            showError:1
+        });
 
+        if (this.validator.allValid()) {
+            // Calculation of Leave taken and remaining
+            var calTakenLeave = Number(this.state.taken);
+            var calRemainingLeave = Number(this.state.remaining);
+            var calDaysCount = Number(this.state.daysCount);
+            var leaveTypeSelected = this.state.leaveTypeValue;
+            //var calLeaveBalance = Number(this.state.balance);
 
-        //     console.log(this.state.taken,this.state.remaining);
-        //     var data = {
-        //         leaveType: this.state.leaveTypeValue,
-        //         fromDate: this.state.fromLeave,
-        //         toDate: this.state.toLeave,
-        //         reason: this.state.reason,
-        //         days:this.state.daysCount,
-        //         currentDate: this.state.currentDate,
-        //         taken: this.state.taken,
-        //         remaining:this.state.remaining
-        //     };
-        //     console.log(data);
+            let totalDaysTaken = calTakenLeave + calDaysCount;
+            let totalDaysRemaining = calRemainingLeave - calDaysCount;
             
-        //     var request = new Request('/apply-leave',{
-        //         method:'POST',
-        //         headers: {'Content-Type': 'application/json'},
-        //         body: JSON.stringify(data)
-        //     });
-        //     fetch(request).then(function(response){
-        //         //response.json()
-        //         // .then(function(data){
-                    
-        //         // })
-        //     })
-        // });
+            
+            console.log("Taken"+totalDaysTaken);
+            console.log("Remaining"+totalDaysRemaining);
+            console.log("leave_type "+leaveTypeSelected);
+            
+            if(calDaysCount>calRemainingLeave && leaveTypeSelected !=="7") {
+                event.preventDefault();
+                alert("Please make sure you have enough leave to take.");
+            }else if(leaveTypeSelected ==="7") {
+                this.setState({
+                    taken: totalDaysTaken,
+                    remaining: 0,
+                    balance:0
+                },()=>{
+                    var data = {
+                        balanceID: this.state.balanceID,
+                        leaveType: this.state.leaveTypeValue,
+                        fromDate: this.state.fromLeave,
+                        toDate: this.state.toLeave,
+                        fromDateMonth: moment(this.state.fromLeave).format('MM YYYY'),
+                        toDateMonth: moment(this.state.toLeave).format('MM YYYY'),
+                        reason: this.state.reason,
+                        days:this.state.daysCount,
+                        currentDate: this.state.currentDate,
+                        taken: this.state.taken,
+                        remaining:this.state.remaining,
+                        id:this.state.id
+                    };
+                    fetch('/apply-leave',{
+                        method:'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    })
+                });
+                alert("Apply Successful...");
+            }else{
+                this.setState({
+                    taken: totalDaysTaken,
+                    remaining: totalDaysRemaining
+                },()=>{
+                    var data = {
+                        balanceID: this.state.balanceID,
+                        leaveType: this.state.leaveTypeValue,
+                        fromDate: this.state.fromLeave,
+                        toDate: this.state.toLeave,
+                        fromDateMonth: moment(this.state.fromLeave).format('MM YYYY'),
+                        toDateMonth: moment(this.state.toLeave).format('MM YYYY'),
+                        reason: this.state.reason,
+                        days:this.state.daysCount,
+                        currentDate: this.state.currentDate,
+                        taken: this.state.taken,
+                        remaining:this.state.remaining,
+                        id:this.state.id
+                    };
+                    fetch('/apply-leave',{
+                        method:'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    })
+                });
+                alert("Apply Successful...");
+            }
+        } else {
+            event.preventDefault();
+            this.validator.showMessages();
+            // rerender to show messages for the first time
+            this.forceUpdate();
+        }  
     }
 
     getLeaves = (id,leaveType) => {
@@ -327,11 +325,17 @@ render() {
     return (
        <Container>
             <div>
-            <h2><Button color="dark" onClick={this.applyToggle}>Apply</Button>  Leave Balance</h2>
+            <h2><Button color="primary" onClick={this.applyToggle}>New Leave Application</Button>  Leave Balance</h2>
+            <br></br>
                 <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
                 <Form onSubmit={this.handleSubmit}>
                     <ModalHeader toggle={this.toggle} charCode="Y">Apply for a leave</ModalHeader>
                     <ModalBody>
+                    {/** Error Message Here */}
+                    <FormGroup row hidden={this.state.showError===1 ? false : true}>
+                    <Label for="leaveType" sm={4}></Label>
+                    <Col sm={8}>{this.validator.message('leaveType', this.state.leaveTypeValue, 'required|between:1,7')}</Col>
+                    </FormGroup>
                     <FormGroup row>
                         <Label for="leaveTypeSelect" sm={4}>Select leave type</Label>
                         <Col sm={8}>
@@ -340,12 +344,17 @@ render() {
                                 <option value="1">Annual Leave</option>
                                 <option value="2">Childcare Leave</option>
                                 <option value="3">National Service</option>
-                                <option value="4">Off in liue</option>
+                                <option value="4">Off in lieu</option>
                                 <option value="5">Medical Leave</option>
                                 <option value="6">Hospitalisation Leave</option>
                                 <option value="7">Unpaid Leave</option>
                             </select>
                         </Col>
+                    </FormGroup>
+                     {/** Error Message Here */}
+                     <FormGroup row hidden={this.state.showError===1 ? false : true}>
+                    <Label for="fromDate" sm={4}></Label>
+                    <Col sm={8}>{this.validator.message('fromDate', this.state.fromLeave, 'required')}</Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label for="leavefromDate" sm={4}>From date</Label>
@@ -359,6 +368,11 @@ render() {
                             onChange={this.handleChangeStart}
                         />
                         </Col>
+                    </FormGroup>
+                    {/** Error Message Here */}
+                    <FormGroup row hidden={this.state.showError===1 ? false : true}>
+                    <Label for="toDate" sm={4}></Label>
+                    <Col sm={8}>{this.validator.message('toDate', this.state.toLeave, 'required')}</Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label for="leavetoDate" sm={4}>To date</Label>
@@ -384,11 +398,21 @@ render() {
                             </FormGroup>
                         </Col>
                     </FormGroup>
+                    {/** Error Message Here */}
+                    <FormGroup row hidden={this.state.showError===1 ? false : true}>
+                    <Label for="days" sm={4}></Label>
+                    <Col sm={8}>{this.validator.message('days', this.state.daysCount, 'required')}</Col>
+                    </FormGroup>
                     <FormGroup row>
                         <Label for="daysApplied" sm={4}>Days Applied</Label>
                         <Col sm={8}>
                             <Input type="number" step="any" name="days" value={this.state.daysCount} onChange={this.handleChangeDays}/>
                         </Col>
+                    </FormGroup>
+                    {/** Error Message Here */}
+                    <FormGroup row hidden={this.state.showError===1 ? false : true}>
+                    <Label for="reason" sm={4}></Label>
+                    <Col sm={8}>{this.validator.message('reason', this.state.reason, 'required|max:65')}</Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label for="reason" sm={4}>Reason</Label>
@@ -403,11 +427,13 @@ render() {
                         </Col>
                     </FormGroup>
                      
-                    <Input type="number" step="any" name="taken" value={this.state.taken} readOnly/>
-                    <Input type="number" step="any" name="remaining" value={this.state.remaining} readOnly/>
-                    <Input type="text" name="currentDate" value={moment(this.state.currentDate).format("LL")} readOnly/>
-                    <Input type="text" name="balanceID" value={this.state.balanceID} readOnly/>
-                    <Input type="text" name="id" value={this.state.id} readOnly/>
+                    <Input type="number" step="any" name="taken" value={this.state.taken} readOnly hidden/>
+                    <Input type="number" step="any" name="remaining" value={this.state.remaining} readOnly hidden/>
+                    <Input type="text" name="currentDate" value={moment(this.state.currentDate).format("LL")} readOnly hidden/>
+                    <Input type="text" name="balanceID" value={this.state.balanceID} readOnly hidden/>
+                    <Input type="text" name="id" value={this.state.id} readOnly hidden/>
+                    <Input type="text" name="fromDateMonth" value={this.state.fromLeave} readOnly hidden/>
+                    <Input type="text" name="toDateMonth" value={this.state.toLeave} readOnly hidden/>
                 
                     </ModalBody>
                     <ModalFooter>
