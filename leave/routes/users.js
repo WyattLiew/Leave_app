@@ -61,13 +61,81 @@ router.post('/register', function(req,res){
                 }
                 newUser.password = hash;
                 console.log(newUser);
-                pool.connect();
-                pool.query('INSERT INTO employee(employee_name,employee_email,employee_mobile,employee_dept,employee_date_hired,password,isadmin,ismanagement) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id',
-                [newUser.name,newUser.username,newUser.mobile,newUser.department,newUser.dateHired,newUser.password,newUser.isAdmin,newUser.isManagement]);
+                pool.connect((err,client,done)=>{
+                    if(err) return console.error('error running query', err);
+                client.query('INSERT INTO employee(employee_name,employee_email,employee_mobile,employee_dept,employee_date_hired,password,isadmin,ismanagement) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id',
+                [newUser.name,newUser.username,newUser.mobile,newUser.department,newUser.dateHired,newUser.password,newUser.isAdmin,newUser.isManagement], function(err, result) {
+                    done();
+                        if(err) {
+                            return console.error('error running query', err);
+                        }
+                });
+            });
                 
             });
         });
     }
+});
+
+// Modified employee details
+router.post('/modified_employee_details', function(req,res){
+    const id = req.body.id;
+    const name = req.body.name;
+    const username = req.body.email;
+    const mobile = req.body.mobile;
+    const department = req.body.department;
+    const isAdmin = req.body.isAdmin;
+    const isManagement = req.body.isManagement;
+    
+
+    req.checkBody('name', 'Name is required').notEmpty();
+    req.checkBody('email', 'Email is required').notEmpty();
+    req.checkBody('email', 'Email is not valid').isEmail();
+    req.checkBody('mobile', 'Mobile is required').notEmpty();
+    req.checkBody('department','Department is required').notEmpty();
+
+    let errors = req.validationErrors();
+
+    if(errors){
+        console.log(errors.msg);
+    }else{
+        let newUser = {
+            empId:id,
+            name:name,
+            username:username,
+            mobile:mobile,
+            isAdmin:isAdmin,
+            isManagement:isManagement,
+            department:department
+        };
+        console.log(newUser);
+        pool.connect((err,client,done)=>{
+            if(err) return console.error('error running query', err);
+            client.query('UPDATE employee SET employee_name=$1, employee_email=$2, employee_mobile=$3, employee_dept=$4,isadmin=$5, ismanagement=$6 WHERE id=$7',
+            [newUser.name,newUser.username,newUser.mobile,newUser.department,newUser.isAdmin,newUser.isManagement,newUser.empId], function(err, result) {
+                    done();
+                        if(err) {
+                            return console.error('error running query', err);
+                        }
+                });
+            });
+        }
+});
+
+// Delete employee data (indivisual)
+router.delete('/api/delete_individual_employee_data/:id',function(req,res){
+    // connect to postgres 
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+        client.query('DELETE FROM employee WHERE id = $1',[req.params.id], function(err, result) {
+                done();
+                    if(err) {
+                        return console.error('error running query', err);
+                    } else {
+                        res.redirect('/');
+                    }
+            });
+        });
 });
 
 // Login Form

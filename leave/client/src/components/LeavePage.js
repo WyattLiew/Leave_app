@@ -6,6 +6,7 @@ import {
     Form,
     FormGroup,
     Label,
+    Row,
     Col,
     Button,
     Input,
@@ -228,10 +229,10 @@ class LeavePage extends Component {
             console.log("Remaining"+totalDaysRemaining);
             console.log("leave_type "+leaveTypeSelected);
             
-            if(calDaysCount>calRemainingLeave && leaveTypeSelected !=="7") {
+            if(calDaysCount>calRemainingLeave && leaveTypeSelected !=="7" && leaveTypeSelected !=="3") {
                 event.preventDefault();
                 alert("Please make sure you have enough leave to take.");
-            }else if(leaveTypeSelected ==="7") {
+            }else if(leaveTypeSelected ==="7" || leaveTypeSelected ==="3") {
                 this.setState({
                     taken: totalDaysTaken,
                     remaining: 0,
@@ -324,8 +325,10 @@ class LeavePage extends Component {
 render() {
     return (
        <Container>
-            <div>
-            <h2><Button color="primary" onClick={this.applyToggle}>New Leave Application</Button>  Leave Balance</h2>
+            <div><Row>
+            <Col xs="12" md="3"><Button color="primary" onClick={this.applyToggle}>New Leave Application</Button></Col>
+            <Col xs="12" md="4"><h2 className="leave_table_h2 " >Leave Balance</h2></Col>
+            </Row>
             <br></br>
                 <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
                 <Form onSubmit={this.handleSubmit}>
@@ -334,7 +337,7 @@ render() {
                     {/** Error Message Here */}
                     <FormGroup row hidden={this.state.showError===1 ? false : true}>
                     <Label for="leaveType" sm={4}></Label>
-                    <Col sm={8}>{this.validator.message('leaveType', this.state.leaveTypeValue, 'required|between:1,7')}</Col>
+                    <Col className="warning_text" sm={8}>{this.validator.message('leaveType', this.state.leaveTypeValue, 'required|between:1,7')}</Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label for="leaveTypeSelect" sm={4}>Select leave type</Label>
@@ -347,6 +350,9 @@ render() {
                                 <option value="4">Off in lieu</option>
                                 <option value="5">Medical Leave</option>
                                 <option value="6">Hospitalisation Leave</option>
+                                <option value="8">Maternity Leave</option>
+                                <option value="9">Parental Leave</option>
+                                <option value="10">Shared Parental Leave</option>
                                 <option value="7">Unpaid Leave</option>
                             </select>
                         </Col>
@@ -354,7 +360,7 @@ render() {
                      {/** Error Message Here */}
                      <FormGroup row hidden={this.state.showError===1 ? false : true}>
                     <Label for="fromDate" sm={4}></Label>
-                    <Col sm={8}>{this.validator.message('fromDate', this.state.fromLeave, 'required')}</Col>
+                    <Col className="warning_text" sm={8}>{this.validator.message('fromDate', this.state.fromLeave, 'required')}</Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label for="leavefromDate" sm={4}>From date</Label>
@@ -372,7 +378,7 @@ render() {
                     {/** Error Message Here */}
                     <FormGroup row hidden={this.state.showError===1 ? false : true}>
                     <Label for="toDate" sm={4}></Label>
-                    <Col sm={8}>{this.validator.message('toDate', this.state.toLeave, 'required')}</Col>
+                    <Col className="warning_text" sm={8}>{this.validator.message('toDate', this.state.toLeave, 'required')}</Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label for="leavetoDate" sm={4}>To date</Label>
@@ -401,7 +407,7 @@ render() {
                     {/** Error Message Here */}
                     <FormGroup row hidden={this.state.showError===1 ? false : true}>
                     <Label for="days" sm={4}></Label>
-                    <Col sm={8}>{this.validator.message('days', this.state.daysCount, 'required')}</Col>
+                    <Col className="warning_text" sm={8}>{this.validator.message('days', this.state.daysCount, 'required')}</Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label for="daysApplied" sm={4}>Days Applied</Label>
@@ -412,7 +418,7 @@ render() {
                     {/** Error Message Here */}
                     <FormGroup row hidden={this.state.showError===1 ? false : true}>
                     <Label for="reason" sm={4}></Label>
-                    <Col sm={8}>{this.validator.message('reason', this.state.reason, 'required|max:65')}</Col>
+                    <Col className="warning_text" sm={8}>{this.validator.message('reason', this.state.reason, 'required|max:65')}</Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label for="reason" sm={4}>Reason</Label>

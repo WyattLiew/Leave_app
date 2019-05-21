@@ -4,8 +4,6 @@ import {
     Container,
     Form,
     FormGroup,
-    Label,
-    Col,
     Button,
     Input
 } from 'reactstrap';
@@ -89,34 +87,26 @@ class Login extends Component {
 render() {
     return (
        <Container>
-           <h2>Login</h2>
             <div>
-                <Form method="POST" action="/login" onSubmit={this.handleSubmit}>
+                <Form className="box" method="POST" action="/login" onSubmit={this.handleSubmit}>
+                <h1>Login</h1>
                     {/** Error Message Here */}
                     <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                    <Label for="username" sm={4}></Label>
-                    <Col sm={8}>{this.validator.message('username', this.state.username, 'required|email')}</Col>
+                        <p>{this.validator.message('username', this.state.username, 'required|email')}</p>
                     </FormGroup>
-                    <FormGroup row>
-                        <Label for="username" sm={4}>Email</Label>
-                        <Col sm={8}>
-                            <Input type="email" name="username"  placeholder="Your Email address" onChange={this.handleChangeUsername}/>
-                        </Col>
+                    <FormGroup>
+                        <Input type="email" name="username"  placeholder="Your Email address" onChange={this.handleChangeUsername}/>
                     </FormGroup>
                      {/** Error Message Here */}
                      <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                    <Label for="password" sm={4}></Label>
-                    <Col sm={8}>{this.validator.message('password', this.state.password, 'required|min:6')}</Col>
+                        <p>{this.validator.message('password', this.state.password, 'required|min:6')}</p>
                     </FormGroup>
-                    <FormGroup row>
-                        <Label for="password" sm={4}>Password</Label>
-                        <Col sm={8}>
-                            <Input type="password" name="password"  placeholder="********" onChange={this.handleChangePassword} autoComplete="off"/>
-                        </Col>
+                    <FormGroup>
+                        <Input type="password" name="password"  placeholder="********" onChange={this.handleChangePassword} autoComplete="off"/>
                     </FormGroup>
-                        <Input type="submit" className="btn btn-primary " value="Log in"/>{' '}
+                        <Input type="submit"  value="Login"/>
+                        <Button color="link"  onClick={()=>{if(window.confirm('Checking ...'));}}>Forget password?</Button>
                     </Form>
-                    <Button color="link" className="float-right" onClick={this.applyToggle}>Forget password?</Button>
       </div>
        </Container>
     );

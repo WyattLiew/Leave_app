@@ -78,7 +78,7 @@ class LeavePage extends Component {
 
 render() {
     return (
-        <Table>
+        <Table className="leave_table" responsive>
             <thead>
                 <tr>
                     {/* <th>Employee Id</th> */}
@@ -97,7 +97,7 @@ render() {
                     {/* <td>{leave.employee_id}</td> */}
                     <td>{leave.leave_type}</td>
                     <td>{leave.year_number}</td>
-                    <td>{moment(leave.updated).format("LL")}</td>
+                    <td>{moment(leave.updated).format("DD MMM, YYYY")}</td>
                     <td>{leave.leave_balance}</td>
                     <td>{leave.leave_taken}</td>
                     <td>{leave.leave_remaining}</td>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as moment from 'moment';
+import { FaTrashAlt } from 'react-icons/fa';
 import {
     Container,
     Button,
@@ -183,9 +184,9 @@ class HistoryPage extends Component {
     render(){
         return (
             <Container>
-                <h2>Leave History</h2>
+                <h2 className="history_table_h2">Leave History</h2>
                 <br></br>
-                <Table>
+                <Table className="leave_table" responsive>
                     <thead>
                         <tr>
                             {/* <th>Employee Id</th> */}
@@ -207,7 +208,7 @@ class HistoryPage extends Component {
                             <td>{leave.number_of_days + " day(s)"}</td>
                             <td>{leave.reason}</td>
                             <td>{leave.leave_status}</td>
-                            <td><Button color="danger" id={leave.leave_period_id} onClick={() => {if(window.confirm('Delete the item?')){this.cancelToggle(leave.leave_period_id)};}} hidden={leave.leave_approval_code===1 ? false : true}>Cancel</Button></td>
+                            <td><Button color="link" style={{color:"red"}} id={leave.leave_period_id} onClick={() => {if(window.confirm('Are you sure you want to cancel your request?')){this.cancelToggle(leave.leave_period_id)};}} hidden={leave.leave_approval_code===1 ? false : true}><FaTrashAlt /></Button></td>
                         </tr>
                         
                         

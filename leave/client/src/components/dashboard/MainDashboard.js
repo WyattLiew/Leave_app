@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as moment from 'moment';
 import appleLeaveGuide from '../../images/leave_guide.png'
+import { FiUserCheck,FiHelpCircle,FiX,FiCheck } from "react-icons/fi";
 import {
     Jumbotron,
     Container,
@@ -142,7 +143,7 @@ getBalance = _ =>{
             taken:leaves.leave_taken,
             remaining:leaves.leave_remaining
         },()=>{
-        //console.log(this.state.name,"ID "+this.state.balanceID,"B "+this.state.balance,"R "+this.state.remaining, "T "+this.state.taken);
+        console.log(this.state.name,"ID "+this.state.balanceID,"B "+this.state.balance,"R "+this.state.remaining, "T "+this.state.taken);
         })
     )
 }
@@ -211,20 +212,15 @@ render() {
     return (
         <Container>
             <Jumbotron>
-            <h2 className="display-4">Welcome Back, {this.state.name} :)</h2>
-            <h5 >{moment(this.state.currentDate).format("LL")}</h5>
+            <h2 className="display-4">Welcome Back, {this.state.name} <FiUserCheck className="display-4"/></h2>
+            <h5 >{moment(this.state.currentDate).format("DD MMM, YYYY")}</h5>
             <hr className="my-2" />
             <h6>Your annual leave balance :</h6>
         <br></br>
             <Row>
-                <Col xs="6" sm="4"> <h4><Badge color="secondary">{this.state.balance}</Badge></h4></Col>
-                <Col xs="6" sm="4"><h4><Badge color="secondary">{this.state.taken}</Badge></h4></Col>
-                <Col sm="4"><h4><Badge color="secondary">{this.state.remaining}</Badge></h4></Col>
-            </Row>
-            <Row>
-                <Col xs="6" sm="4">Total Leaves Accured</Col>
-                <Col xs="6" sm="4">Leaves Used</Col>
-                <Col sm="4">Leaves Remaining</Col>
+                <Col xs="12" md="4"> <h4><Badge color="secondary">{this.state.balance}</Badge></h4>Total Leaves Accured</Col>
+                <Col xs="12" md="4"><h4><Badge color="secondary">{this.state.taken}</Badge></h4>Leaves Used</Col>
+                <Col xs="12" md="4"><h4><Badge color="secondary">{this.state.remaining}</Badge></h4>Leaves Remaining</Col>
             </Row>
             </Jumbotron>
 
@@ -233,12 +229,13 @@ render() {
             <h2>My Actions</h2>
             <h6>My leave approvals</h6>
             <br></br>
-                <Table>
+            {this.state.leavesTaken.length !==0 ?
+                <Table className="leave_table_main" responsive>
                     <thead>
                         <tr>
-                            <th>Employee Name</th>
+                            <th>Name</th>
                             <th>Dates</th>
-                            <th>Number of Days</th>
+                            <th>Days</th>
                             <th>Reason</th>
                             <th>Action</th>
                         </tr>
@@ -251,22 +248,22 @@ render() {
                             <td>{moment(leave.leave_from_date).format("DD")} - {moment(leave.leave_to_date).format("DD MMM, YYYY")}</td>
                             <td>{leave.number_of_days + " day(s)"}</td>
                             <td>{leave.reason}</td>
-                            <td>
-                                <Button color="primary" size="sm" id={leave.leave_period_id} onClick={() => {if(window.confirm('Are you sure you want to approve the following leave?')){this.approveToggle(leave.leave_period_id,leave.id)};}} hidden={leave.leave_approval_code===1 ? false : true}>Approve</Button> {' '}
-                                <Button color="danger" size="sm" id={leave.leave_period_id} onClick={() => {if(window.confirm('Are you sure you want to reject the following leave?')){this.rejectToggle(leave.leave_period_id,leave.id)};}} hidden={leave.leave_approval_code===1 ? false : true}>Reject</Button>
-                            </td>
+                            <td><Row>
+                                <Col xs="6" md="3"><Button color="dark" style={{color:"chartreuse"}} size="sm" id={leave.leave_period_id} onClick={() => {if(window.confirm('Are you sure you want to approve the following leave?')){this.approveToggle(leave.leave_period_id,leave.id)};}} hidden={leave.leave_approval_code===1 ? false : true}><FiCheck /></Button></Col>
+                                <Col xs="6" md="3"><Button color="dark" style={{color:"red"}} size="sm"  id={leave.leave_period_id} onClick={() => {if(window.confirm('Are you sure you want to reject the following leave?')){this.rejectToggle(leave.leave_period_id,leave.id)};}} hidden={leave.leave_approval_code===1 ? false : true}><FiX /></Button></Col>
+                            </Row></td>
                             
                         </tr>
                         
                         </tbody>
                         )}
-                    </Table>
+                    </Table> : <h4>No Record Found..</h4> }
                     </Jumbotron>
             </div>   
         <Row>
-        <Col xs="7" md="7" sm="7">
+        <Col xs="12" md="7" sm="7">
         <Jumbotron >
-        <h4 className="display-5">Things you might not know</h4>
+        <h4 className="display-5">Things you might not know <FiHelpCircle/></h4>
         <div>
                 <Button color="info" onClick={this.toggleMessage3} style={{ marginBottom: '1rem',marginTop: '1rem'  }}>How to apply leave?</Button>
                 <Collapse isOpen={this.state.collapse3}>
@@ -316,11 +313,11 @@ render() {
         </Jumbotron>
     </Col>
 
-        <Col xs="5" md="5" sm="5">
+        <Col xs="12" md="5" sm="5">
         <Jumbotron >
         <h2>Who's off</h2>
         <Row>
-        <Col xs="6" md="6"><h6>{moment(this.state.currentDate).format("LL")}</h6></Col>
+        <Col xs="6" md="6"><h6>{moment(this.state.currentDate).format("DD MMM, YYYY")}</h6></Col>
         <Form>
         <FormGroup row>
                 <Col sm={8}>
@@ -345,12 +342,12 @@ render() {
         </Row>
         <br></br>
         {this.state.leavesTakenByMonth.length !==0 ? 
-        <Table bordered>
+        <Table className="leave_table_main" responsive>
                 <thead>
                         <tr>
-                            <th>Employee Name</th>
+                            <th>Name</th>
                             <th>Dates</th>
-                            <th>Number of Days</th>
+                            <th>Days</th>
                         </tr>
                         </thead>
                         {this.state.leavesTakenByMonth.map(leave =>
