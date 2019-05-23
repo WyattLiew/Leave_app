@@ -72,18 +72,18 @@ router.get('/api/get_leaves_balance/:id/:leaveType',function(req,res){
 router.post('/apply-leave',function(req,res){
     // connect to postgres 
 
-    console.log(req.body.reason);
-    console.log(req.body.fromDateMonth);
-    console.log(req.body.toDateMonth);
-    console.log(req.body.fromDate);
-    console.log(req.body.toDate);
-    console.log(req.body.leaveType);
-    console.log(req.body.days);
-    console.log(req.body.taken);
-    console.log(req.body.remaining);
-    console.log(req.body.currentDate);
-    console.log(req.body.balanceID);
-    console.log(req.body.id);
+    // console.log(req.body.reason);
+    // console.log(req.body.fromDateMonth);
+    // console.log(req.body.toDateMonth);
+    // console.log(req.body.fromDate);
+    // console.log(req.body.toDate);
+    // console.log(req.body.leaveType);
+    // console.log(req.body.days);
+    // console.log(req.body.taken);
+    // console.log(req.body.remaining);
+    // console.log(req.body.currentDate);
+    // console.log(req.body.balanceID);
+    // console.log(req.body.id);
     const isapprove = 1;
 
     pool.connect((err,client,done)=>{
@@ -176,10 +176,10 @@ router.get('/api/get_all_leaves_taken',function(req,res){
 router.post('/api/update_leaves_taken_approval',function(req,res){
     // connect to postgres 
 
-    console.log("LC "+req.body.leaveApprovalCode);
-    console.log("periodID"+req.body.leavePeriodID);
+    // console.log("LC "+req.body.leaveApprovalCode);
+    // console.log("periodID"+req.body.leavePeriodID);
     
-    console.log("ID "+req.body.employeeID);
+    // console.log("ID "+req.body.employeeID);
 
     pool.connect((err,client,done)=>{
         if(err) return console.error('error running query', err);
@@ -242,13 +242,13 @@ router.get('/api/get_leaves_taken_cancel/:id',function(req,res){
 router.post('/api/update_leaves_taken',function(req,res){
     // connect to postgres 
 
-    console.log("LT "+req.body.leaveType);
-    console.log("D "+req.body.days);
-    console.log("TA "+req.body.taken);
-    console.log("RM "+req.body.remaining);
-    console.log("cD "+req.body.currentDate);
-    console.log("BID "+req.body.balanceID);
-    console.log("ID "+req.body.employeeID);
+    // console.log("LT "+req.body.leaveType);
+    // console.log("D "+req.body.days);
+    // console.log("TA "+req.body.taken);
+    // console.log("RM "+req.body.remaining);
+    // console.log("cD "+req.body.currentDate);
+    // console.log("BID "+req.body.balanceID);
+    // console.log("ID "+req.body.employeeID);
 
     pool.connect((err,client,done)=>{
         if(err) return console.error('error running query', err);

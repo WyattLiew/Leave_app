@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as moment from 'moment';
 import SimpleReactValidator from 'simple-react-validator';
-import { IoMdCreate } from "react-icons/io";
+import { IoMdCreate,IoIosCreate } from "react-icons/io";
 
 import {
 Table,
@@ -31,6 +31,7 @@ constructor() {
         employee:[],
         individualEmployee:[],
         editId:'',
+        editName:'',
         updatedDate:new Date(),
 
         // leave Details
@@ -42,7 +43,14 @@ constructor() {
         leave9_1:'',leave9_2:'',leave9_3:'',leave10_1:'',leave10_2:'',leave10_3:'',
 
         // edit leave
-        individualEmployeeLeaveBalance:[]
+        individualEmployeeLeaveBalance:[],
+        editLeave1_1:'',editLeave1_2:'',editLeave1_3:'',
+        leaveTypeValue:0,
+        balanceID:'',
+        leaveType:'',
+        balance:'',
+        taken:'',
+        remaining:''
 
     }
     this.validator = new SimpleReactValidator();
@@ -50,6 +58,8 @@ constructor() {
     this.editLeaveToggle = this.editLeaveToggle.bind(this);
     this.leaveToggle = this.leaveToggle.bind(this);
     this.handleSubmitNewLeave = this.handleSubmitNewLeave.bind(this);
+    this.handleSubmitEditLeave = this.handleSubmitEditLeave.bind(this);
+    this.handleChangeLeaveType = this.handleChangeLeaveType.bind(this);
 
     // leave 1
     this.handleChangeLeave1_1 = this.handleChangeLeave1_1.bind(this); this.handleChangeLeave1_2 = this.handleChangeLeave1_2.bind(this); this.handleChangeLeave1_3 = this.handleChangeLeave1_3.bind(this);
@@ -72,6 +82,9 @@ constructor() {
     // leave 10
     this.handleChangeLeave10_1 = this.handleChangeLeave10_1.bind(this); this.handleChangeLeave10_2 = this.handleChangeLeave10_2.bind(this); this.handleChangeLeave10_3 = this.handleChangeLeave10_3.bind(this);
 
+
+    // Edit leave 1
+    this.handleChangeEditLeave1_1 = this.handleChangeEditLeave1_1.bind(this); this.handleChangeEditLeave1_2 = this.handleChangeEditLeave1_2.bind(this); this.handleChangeEditLeave1_3 = this.handleChangeEditLeave1_3.bind(this);
     }
 
     componentDidMount() {
@@ -82,9 +95,15 @@ constructor() {
 editLeaveToggle() {
     this.setState({
     showError:0,
-    leave1_1:'',
-    leave1_2:'',
-    leave1_3:''
+    leaveTypeValue:0,
+    balanceID:'',
+    leaveType:'',
+    balance:'',
+    taken:'',
+    remaining:'',
+    editLeave1_1:'',
+    editLeave1_2:'',
+    editLeave1_3:''
     
     })
     this.setState(prevState => ({
@@ -105,7 +124,10 @@ this.setState(prevState => ({
 }));
 }
 
-
+/**
+ * 
+ * New Leave
+ */
 
 // leave1_1 handler
 handleChangeLeave1_1(event) {
@@ -268,42 +290,108 @@ this.setState({
 });
 }
 
-
-
 // Submit handler
 handleSubmitNewLeave(event) {
-this.setState({
-    showError:1
-});
-if (this.validator.allValid()) {
-        var data = {
-            id: this.state.editId,
-            year:moment(this.state.updatedDate).format("YYYY"),
-            updatedDate:moment(this.state.updatedDate).format("LL"),
-            leave1_1:this.state.leave1_1,leave1_2:this.state.leave1_2,leave1_3:this.state.leave1_3,
-            leave2_1:this.state.leave2_1,leave2_2:this.state.leave2_2,leave2_3:this.state.leave2_3,
-            leave3_1:this.state.leave3_1,leave3_2:this.state.leave3_2,leave3_3:this.state.leave3_3,
-            leave4_1:this.state.leave4_1,leave4_2:this.state.leave4_2,leave4_3:this.state.leave4_3,
-            leave5_1:this.state.leave5_1,leave5_2:this.state.leave5_2,leave5_3:this.state.leave5_3,
-            leave6_1:this.state.leave6_1,leave6_2:this.state.leave6_2,leave6_3:this.state.leave6_3,
-            leave7_1:this.state.leave7_1,leave7_2:this.state.leave7_2,leave7_3:this.state.leave7_3,
-            leave8_1:this.state.leave8_1,leave8_2:this.state.leave8_2,leave8_3:this.state.leave8_3,
-            leave9_1:this.state.leave9_1,leave9_2:this.state.leave9_2,leave9_3:this.state.leave9_3,
-            leave10_1:this.state.leave10_1,leave10_2:this.state.leave10_2,leave10_3:this.state.leave10_3
-        };
-        fetch('/update_employee_new_details',{
-            method:'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        }); 
-         alert('You submitted the form and stuff!');
-} else {
-    event.preventDefault();
-    this.validator.showMessages();
-    alert('Please check your details.');
-    // rerender to show messages for the first time
-    this.forceUpdate();
-}  
+    this.setState({
+        showError:1
+    });
+    if (this.validator.allValid()) {
+            var data = {
+                id: this.state.editId,
+                year:moment(this.state.updatedDate).format("YYYY"),
+                updatedDate:moment(this.state.updatedDate).format("LL"),
+                leave1_1:this.state.leave1_1,leave1_2:this.state.leave1_2,leave1_3:this.state.leave1_3,
+                leave2_1:this.state.leave2_1,leave2_2:this.state.leave2_2,leave2_3:this.state.leave2_3,
+                leave3_1:this.state.leave3_1,leave3_2:this.state.leave3_2,leave3_3:this.state.leave3_3,
+                leave4_1:this.state.leave4_1,leave4_2:this.state.leave4_2,leave4_3:this.state.leave4_3,
+                leave5_1:this.state.leave5_1,leave5_2:this.state.leave5_2,leave5_3:this.state.leave5_3,
+                leave6_1:this.state.leave6_1,leave6_2:this.state.leave6_2,leave6_3:this.state.leave6_3,
+                leave7_1:this.state.leave7_1,leave7_2:this.state.leave7_2,leave7_3:this.state.leave7_3,
+                leave8_1:this.state.leave8_1,leave8_2:this.state.leave8_2,leave8_3:this.state.leave8_3,
+                leave9_1:this.state.leave9_1,leave9_2:this.state.leave9_2,leave9_3:this.state.leave9_3,
+                leave10_1:this.state.leave10_1,leave10_2:this.state.leave10_2,leave10_3:this.state.leave10_3
+            };
+            fetch('/update_employee_new_details',{
+                method:'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }); 
+             alert('You submitted the form and stuff!');
+    } else {
+        event.preventDefault();
+        this.validator.showMessages();
+        alert('Please check your details.');
+        // rerender to show messages for the first time
+        this.forceUpdate();
+    }  
+}
+
+/**
+ * 
+ * Edit Leave
+ */
+
+ // leave1_1 handler
+handleChangeEditLeave1_1(event) {
+    this.setState({
+        //editLeave1_1: event.target.value
+        balance: event.target.value
+    });
+    }
+    handleChangeEditLeave1_2(event) {
+    this.setState({
+        //editLeave1_2: event.target.value
+        taken: event.target.value
+    });
+    }
+    handleChangeEditLeave1_3(event) {
+    this.setState({
+        //editLeave1_3: event.target.value
+        remaining: event.target.value
+    });
+}
+
+// Leave Type handler
+handleChangeLeaveType(event) {
+    this.setState({
+        leaveTypeValue:event.target.value,
+        balanceID:'',
+        leaveTypr:'',
+        balance:'',
+        taken:'',
+        remaining:''
+    },()=> this.getIndividualEmployeeLeaveBalance(this.state.editId,this.state.leaveTypeValue));
+}
+
+// Submit handler
+handleSubmitEditLeave(event) {
+    this.setState({
+        showError:1
+    });
+    if (this.validator.allValid()) {
+        event.preventDefault();
+            var data = {
+                id: this.state.editId,
+                year:moment(this.state.updatedDate).format("YYYY"),
+                updatedDate:moment(this.state.updatedDate).format("LL"),
+                balanceID:this.state.balanceID,
+                //editLeave1_1:this.state.editLeave1_1,editLeave1_2:this.state.editLeave1_2,editLeave1_3:this.state.editLeave1_3
+                editLeave1_1:this.state.balance,editLeave1_2:this.state.taken,editLeave1_3:this.state.remaining
+            };
+            fetch('/update_employee_exsiting_leave_balance',{
+                method:'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }); 
+            alert('Updated successfully!');
+            this.editLeaveToggle();
+    } else {
+        event.preventDefault();
+        this.validator.showMessages();
+        alert('Please check your details.');
+        // rerender to show messages for the first time
+        this.forceUpdate();
+    }  
 }
 
 /**
@@ -314,7 +402,6 @@ if (this.validator.allValid()) {
 //Get details
 getDetails(id){
 this.getIndividualEmployee(id);
-this.getIndividualEmployeeLeaveBalance(id);
 }
 
 // fire GET individual details
@@ -322,7 +409,7 @@ getIndividualDetials = _ =>{
 this.state.individualEmployee.map(emp => 
     this.setState({
     editId:emp.id,
-    // editName:emp.employee_name.split(' ').join(''),
+    editName:emp.employee_name.split(' ').join(''),
     // editEmail:emp.employee_email,
     // editMobile:emp.employee_mobile,
     // editDepartment:emp.employee_dept,
@@ -335,7 +422,23 @@ this.state.individualEmployee.map(emp =>
 //Get Leave details
 getLeaveDetails(id){
     this.getIndividualEmployeeLeaveDetails(id);
-    }
+}
+
+// Get Balance
+getBalance = _ =>{
+this.state.individualEmployeeLeaveBalance.map(leaves =>
+        this.setState({
+            balanceID: leaves.leave_balance_id,
+            balance:leaves.leave_balance,
+            taken:leaves.leave_taken,
+            remaining:leaves.leave_remaining,
+            leaveType:leaves.leave_type
+        },()=>{
+        //console.log("ID "+this.state.balanceID,"B "+this.state.balance,"R "+this.state.remaining, "T "+this.state.taken);
+        })
+    )
+}
+
 
 
 
@@ -380,14 +483,15 @@ getIndividualEmployeeLeaveDetails = (employeeID) => {
     }
 
 // get individual Employee leave balance
-getIndividualEmployeeLeaveBalance = (employeeID) => {
-    fetch(`/api/get_individual_employee_leave_balance/${employeeID}`)
+getIndividualEmployeeLeaveBalance = (employeeID,leaveType) => {
+    fetch(`/api/get_individual_employee_leave_balance/${employeeID}/${leaveType}`)
         .then(response => response.json())
         // .then(({data})=>{
         //   console.log(data);
         // })
         .then(response => this.setState({ individualEmployeeLeaveBalance: response.data},()=>{
-        console.log(this.state.individualEmployeeLeaveBalance)
+            this.getBalance();
+        //console.log(this.state.individualEmployeeLeaveBalance);
         })).catch(err=>console.error(err));
     }
         
@@ -410,10 +514,10 @@ return (
                 <td>{emp.id}</td>
                 <td>{emp.employee_name}</td>
                 <td>
-                <Button color="link" style={{color:"chartreuse"}}id={emp.id} onClick={()=>{(this.leaveToggle)(this.getLeaveDetails(emp.id))}} hidden={emp.isadmin ? true : false}><IoMdCreate /></Button>
+                <Button color="link" style={{color:"lime"}}id={emp.id} onClick={()=>{(this.leaveToggle)(this.getLeaveDetails(emp.id))}} hidden={emp.isadmin ? true : false}><IoIosCreate style={{fontSize:'x-large'}}/></Button>
                 </td>
                 <td><Row>
-                    <Col  ><Button color="link" style={{color:"chartreuse"}}id={emp.id} onClick={()=>{(this.editLeaveToggle)(this.getDetails(emp.id))}} hidden={emp.isadmin ? true : false}><IoMdCreate /></Button></Col>                      
+                    <Col  ><Button color="link" style={{color:"#3498db"}}id={emp.id} onClick={()=>{(this.editLeaveToggle)(this.getDetails(emp.id))}} hidden={emp.isadmin ? true : false}><IoMdCreate style={{fontSize:'x-large'}}/></Button></Col>                      
                     </Row></td>
             </tr>
             </tbody>
@@ -614,153 +718,51 @@ return (
         
         
         <Modal isOpen={this.state.modalEdit} toggle={this.toggle} className={this.props.className}>
-        <Form onSubmit={this.handleSubmit}>
-            <ModalHeader toggle={this.toggle} charCode="Y">Edit</ModalHeader>
+        <Form onSubmit={this.handleSubmitEditLeave}>
+            <ModalHeader toggle={this.toggle} charCode="Y">Editing {this.state.editName + "'s entitlements ID: " + this.state.editId }</ModalHeader>
             <ModalBody>
+            {/** Error Message Here */}
+            <FormGroup row hidden={this.state.showError===1 ? false : true}>
+            <Label for="leaveType" sm={4}></Label>
+            <Col className="warning_text" sm={8}>{this.validator.message('leaveType', this.state.leaveTypeValue, 'required|between:1,7')}</Col>
+            </FormGroup>
             <FormGroup row>
-                <Label for="leave1_1" sm={4}>Annual Leave</Label>
+                <Label for="leaveTypeSelect" sm={4}>Select leave type</Label>
+                <Col sm={8}>
+                    <select value={this.state.leaveTypeValue} name="leaveType" id="leaveTypeSelect" onChange={this.handleChangeLeaveType}> 
+                        <option value="0">Select your leave</option>
+                        <option value="1">Annual Leave</option>
+                        <option value="2">Childcare Leave</option>
+                        <option value="3">National Service</option>
+                        <option value="4">Off in lieu</option>
+                        <option value="5">Medical Leave</option>
+                        <option value="6">Hospitalisation Leave</option>
+                        <option value="8">Maternity Leave</option>
+                        <option value="9">Parental Leave</option>
+                        <option value="10">Shared Parental Leave</option>
+                        <option value="7">Unpaid Leave</option>
+                    </select>
+                </Col>
+            </FormGroup>
+            <FormGroup row>
+                <Label for="editLeave1_1" sm={4}>{this.state.leaveType}</Label>
                 <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave1_1" placeholder="Balance" onChange={this.handleChangeLeave1_1} defaultValue={this.state.leave1_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave1_2" placeholder="Taken" onChange={this.handleChangeLeave1_2} defaultValue={this.state.leave1_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave1_3" placeholder="Remaining" onChange={this.handleChangeLeave1_3} defaultValue={this.state.leave_1_3}  />   </Col>
+                    <Col sm={4}><Input type="number" name="editLeave1_1" placeholder="Balance" onChange={this.handleChangeEditLeave1_1} defaultValue={this.state.balance}  />   </Col>
+                    <Col sm={4}><Input type="number" name="editLeave1_2" placeholder="Taken" onChange={this.handleChangeEditLeave1_2} defaultValue={this.state.taken}  />   </Col>
+                    <Col sm={4}><Input type="number" name="editLeave1_3" placeholder="Remaining" onChange={this.handleChangeEditLeave1_3} defaultValue={this.state.remaining}  />   </Col>
             </FormGroup>
             {/** Error Message Here */}
             <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave1_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave1_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave1_3, 'required|integer')}</Col>
-            </FormGroup>
-                
-            <FormGroup row>
-                <Label for="leave2_1" sm={4}>Childcare Leave</Label>
-                <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave2_1" placeholder="Balance" onChange={this.handleChangeLeave2_1} defaultValue={this.state.leave2_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave2_2" placeholder="Taken" onChange={this.handleChangeLeave2_2} defaultValue={this.state.leave2_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave2_3" placeholder="Remaining" onChange={this.handleChangeLeave2_3} defaultValue={this.state.leave2_3}  />   </Col> 
-            </FormGroup>
-            {/** Error Message Here */}
-            <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave1_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave1_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave1_3, 'required|integer')}</Col>
-            </FormGroup>
-
-            <FormGroup row>
-                <Label for="leave3_1" sm={4}>National Service</Label>
-                <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave3_1" placeholder="Balance" onChange={this.handleChangeLeave3_1} defaultValue={this.state.leave3_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave3_2" placeholder="Taken" onChange={this.handleChangeLeave3_2} defaultValue={this.state.leave3_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave3_3" placeholder="Remaining" onChange={this.handleChangeLeave3_3} defaultValue={this.state.leave3_3}  />   </Col> 
-            </FormGroup>
-            {/** Error Message Here */}
-            <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave3_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave3_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave3_3, 'required|integer')}</Col>
-            </FormGroup>
-
-            <FormGroup row>
-                <Label for="leave4_1" sm={4}>Off In Lieu</Label>
-                <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave4_1" placeholder="Balance" onChange={this.handleChangeLeave4_1} defaultValue={this.state.leave4_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave4_2" placeholder="Taken" onChange={this.handleChangeLeave4_2} defaultValue={this.state.leave4_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave4_3" placeholder="Remaining" onChange={this.handleChangeLeave4_3} defaultValue={this.state.leave4_3}  />   </Col> 
-            </FormGroup>
-            {/** Error Message Here */}
-            <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave4_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave4_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave4_3, 'required|integer')}</Col>
-            </FormGroup>
-
-            <FormGroup row>
-                <Label for="leave5_1" sm={4}>Medical Leave</Label>
-                <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave5_1" placeholder="Balance" onChange={this.handleChangeLeave5_1} defaultValue={this.state.leave5_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave5_2" placeholder="Taken" onChange={this.handleChangeLeave5_2} defaultValue={this.state.leave5_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave5_3" placeholder="Remaining" onChange={this.handleChangeLeave5_3} defaultValue={this.state.leave5_3}  />   </Col> 
-            </FormGroup>
-            {/** Error Message Here */}
-            <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave5_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave5_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave5_3, 'required|integer')}</Col>
-            </FormGroup>
-
-            <FormGroup row>
-                <Label for="leave6_1" sm={4}>Hospitalisation Leave</Label>
-                <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave6_1" placeholder="Balance" onChange={this.handleChangeLeave6_1} defaultValue={this.state.leave6_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave6_2" placeholder="Taken" onChange={this.handleChangeLeave6_2} defaultValue={this.state.leave6_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave6_3" placeholder="Remaining" onChange={this.handleChangeLeave6_3} defaultValue={this.state.leave6_3}  />   </Col> 
-            </FormGroup>
-            {/** Error Message Here */}
-            <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave6_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave6_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave6_3, 'required|integer')}</Col>
-            </FormGroup>
-
-            <FormGroup row>
-                <Label for="leave7_1" sm={4}>Unpaid Leave</Label>
-                <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave7_1" placeholder="Balance" onChange={this.handleChangeLeave7_1} defaultValue={this.state.leave7_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave7_2" placeholder="Taken" onChange={this.handleChangeLeave7_2} defaultValue={this.state.leave7_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave7_3" placeholder="Remaining" onChange={this.handleChangeLeave7_3} defaultValue={this.state.leave7_3}  />   </Col> 
-            </FormGroup>
-            {/** Error Message Here */}
-            <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave7_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave7_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave7_3, 'required|integer')}</Col>
-            </FormGroup>
-
-            <FormGroup row>
-                <Label for="leave8_1" sm={4}>Maternity Leave</Label>
-                <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave8_1" placeholder="Balance" onChange={this.handleChangeLeave8_1} defaultValue={this.state.leave8_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave8_2" placeholder="Taken" onChange={this.handleChangeLeave8_2} defaultValue={this.state.leave8_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave8_3" placeholder="Remaining" onChange={this.handleChangeLeave8_3} defaultValue={this.state.leave8_3}  />   </Col> 
-            </FormGroup>
-            {/** Error Message Here */}
-            <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave8_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave8_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave8_3, 'required|integer')}</Col>
-            </FormGroup>
-
-            <FormGroup row>
-                <Label for="leave9_1" sm={4}>Parental Leave</Label>
-                <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave9_1" placeholder="Balance" onChange={this.handleChangeLeave9_1} defaultValue={this.state.leave9_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave9_2" placeholder="Taken" onChange={this.handleChangeLeave9_2} defaultValue={this.state.leave9_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave9_3" placeholder="Remaining" onChange={this.handleChangeLeave9_3} defaultValue={this.state.leave9_3}  />   </Col> 
-            </FormGroup>
-            {/** Error Message Here */}
-            <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave9_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave9_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave9_3, 'required|integer')}</Col>
-            </FormGroup>
-
-            <FormGroup row>
-                <Label for="leave10_1" sm={4}>Shared Parental Leave</Label>
-                <Col sm={8}></Col>
-                    <Col sm={4}><Input type="number" name="leave10_1" placeholder="Balance" onChange={this.handleChangeLeave10_1} defaultValue={this.state.leave10_1}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave10_2" placeholder="Taken" onChange={this.handleChangeLeave10_2} defaultValue={this.state.leave10_2}  />   </Col>
-                    <Col sm={4}><Input type="number" name="leave10_3" placeholder="Remaining" onChange={this.handleChangeLeave10_3} defaultValue={this.state.leave10_3}  />   </Col> 
-            </FormGroup>
-            {/** Error Message Here */}
-            <FormGroup row hidden={this.state.showError===1 ? false : true}>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.leave10_1, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.leave10_2, 'required|integer')}</Col>
-                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.leave10_3, 'required|integer')}</Col>
+                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Balance', this.state.balance, 'required|integer')}</Col>
+                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Taken', this.state.taken, 'required|integer')}</Col>
+                <Col className="warning_text" sm={4} style={{fontSize:'9px'}}>{this.validator.message('Remaining', this.state.remaining, 'required|integer')}</Col>
             </FormGroup>
             
             
             <Input type="text" name="id" value={this.state.editId} readOnly hidden/>
             <Input type="text" name="updatedDate" value={moment(this.state.updatedDate).format("LL")} readOnly hidden/>
             <Input type="text" name="year" value={moment(this.state.updatedDate).format("YYYY")} readOnly hidden/>
+            <Input type="text" name="balanceID" value={this.state.balanceID} readOnly hidden/>
                 
             </ModalBody>
             <ModalFooter>

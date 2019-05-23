@@ -229,8 +229,9 @@
                 <Row>
                 <Col sm="12">
                 <div>
-                <h2 className="leave_table_h2" style={{marginTop:'30px'}}><Button color="primary" onClick={this.applyToggle}><IoIosAddCircleOutline style={{fontSize:'x-large'}}/> Create New Employee</Button>  Employee Lists</h2>
-                    <h5 style={{color:'#4afb4a'}}>**Click on Leave Management for more details. </h5>
+                <Button style={{marginTop:'30px'}} color="primary" onClick={this.applyToggle}><IoIosAddCircleOutline style={{fontSize:'x-large'}}/> Create New Employee</Button>  
+                <h2 className="leave_table_h2" style={{marginTop:'30px'}}>Employee Lists</h2>
+                    <h5 style={{color:'rgb(115, 125, 117)'}}>**Click on Leave Management for more details. </h5>
                     <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
                     <Form onSubmit={this.handleSubmit}>
                         <ModalHeader toggle={this.toggle} >New Employee</ModalHeader>
@@ -364,7 +365,7 @@
                 <Row>
                 <Col sm="12">
                 <h2 className="leave_table_h2" style={{marginTop:'30px'}}>Leave Management</h2>
-                <h5 style={{color:'#4afb4a'}}>**Please add entitlements for each user. </h5>
+                <h5 style={{color:'rgb(115, 125, 117)'}}>**Please add entitlements for each user. </h5>
                 <EmployeeLeave/>
                 </Col>
                 </Row>

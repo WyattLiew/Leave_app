@@ -2,8 +2,21 @@ body{
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-    background: #34495e;
+    background: #e9ecef;
 }
+
+.login{
+    background: url("../src/images/login-bg.jpg");
+    background-repeat:no-repeat;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    height: -webkit-fill-available;
+    position: absolute;
+    top: 7%;
+    width: -webkit-fill-available;
+}
+
 .box{
     width: 400px;
     padding: 40px;
@@ -11,7 +24,7 @@ body{
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    background: #191919;
+    background:rgba(0, 0, 0, 0.75)!important;
     text-align: center;
 }
 
@@ -79,7 +92,7 @@ body{
 }
 
 .leave_table thead tr,.leave_table_main thead tr{
-    background-color: #3498db;
+    background-color: #009879;
     color: white;
     text-align: left;
     font-weight: bold;
@@ -98,12 +111,12 @@ body{
 }
 
 .leave_table tbody tr:last-of-type,.leave_table_main tbody tr:last-of-type {
-    border-bottom: 2px solid #3498db;
+    border-bottom: 2px solid #009879;
 }
 
 .leave_table tbody tr{
     font-weight: bold;
-    color: white;
+    color: black;
 }
 
 .leave_table_main tbody tr{
@@ -112,13 +125,38 @@ body{
 }
 
 .leave_table_h2 {
-    color:white;
+    color:black;
 }
 
 .history_table_h2 {
-    color:white;
+    color:black;
+}
+
+.h2-align{
+    text-align: center;
 }
 
 .warning_text {
     color: red;
+}
+
+
+
+.nav-link.active{
+    background-color: #303136 !important;
+    color: #fff !important;
+}
+
+.nav-tabs{
+    border-bottom: 1px solid #a7acb1 !important;
+}
+
+.nav-tabs > li > a{
+border: medium none;
+}
+
+.nav-tabs > li > a:hover{
+background-color: rgba(0, 0, 0, 0.15) !important;
+    color:#fff !important;
+    cursor: pointer;
 }

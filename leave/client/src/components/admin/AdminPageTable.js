@@ -241,8 +241,8 @@ render() {
                     <td>{emp.isadmin ? "Admin" : "User"}</td>
                     <td>{emp.ismanagement ? "Management" : "Employee" }</td>
                     <td><Row>
-                      <Col  ><Button color="link" style={{color:"chartreuse"}}id={emp.id} onClick={()=>{(this.editToggle)(this.getDetails(emp.id))}}><IoMdCreate /></Button></Col>
-                      <Col ><Button color="link" style={{color:"red"}}id={emp.id} onClick={() => {if(window.confirm('Delete this employee?')){this.cancelToggle(emp.id)};}}><FaTrashAlt /></Button></Col>                      
+                      <Col  ><Button color="link" style={{color:"#3498db"}}id={emp.id} onClick={()=>{(this.editToggle)(this.getDetails(emp.id))}}><IoMdCreate style={{fontSize:'x-large'}}/></Button></Col>
+                      <Col ><Button color="link" style={{color:"red"}}id={emp.id} onClick={() => {if(window.confirm('Delete this employee?')){this.cancelToggle(emp.id)};}}><FaTrashAlt style={{fontSize:'x-large'}}/></Button></Col>                      
                       </Row></td>
                 </tr>
                 </tbody>

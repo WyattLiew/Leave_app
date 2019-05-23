@@ -86,6 +86,7 @@ class Login extends Component {
     
 render() {
     return (
+    <div className="login">
        <Container>
             <div>
                 <Form className="box" method="POST" action="/login" onSubmit={this.handleSubmit}>
@@ -109,6 +110,7 @@ render() {
                     </Form>
       </div>
        </Container>
+       </div>
     );
 }
 }

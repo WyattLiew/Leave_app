@@ -90,20 +90,20 @@ class AppNavbar extends Component {
 render() {
     return (
         <div>
-            <Navbar color="dark" dark expand="sm" className="mb-5">
+            <Navbar style={{backgroundColor:'#262626'}} dark expand="sm" className="mb-5">
                 <Container>
                     <NavbarBrand href="#">Helios Distribution</NavbarBrand>
                     <NavbarToggler onClick={this.toggle} />
                     <Collapse isOpen={this.state.isOpen} navbar>
                         <Nav className="ml-auto" navbar>
                             <NavItem>
-                                <NavLink href="/MainDashboard" hidden={this.state.isHidden}>Dashboard</NavLink>
+                                <NavLink href="/MainDashboard" style={{color:'white'}} hidden={this.state.isHidden}>Dashboard</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/LeavePage" hidden={this.state.isHidden}>Leaves</NavLink>
+                                <NavLink href="/LeavePage" style={{color:'white'}} hidden={this.state.isHidden}>Leaves</NavLink>
                             </NavItem>
                             <UncontrolledDropdown nav inNavbar hidden={this.state.isHidden}>
-                                <DropdownToggle nav caret>Profile</DropdownToggle>
+                                <DropdownToggle nav caret style={{color:'white'}}>Profile</DropdownToggle>
                                 <DropdownMenu>
                                 <DropdownItem header>Personal</DropdownItem>
                                 <DropdownItem href="/HistoryPage">History</DropdownItem>
@@ -113,10 +113,10 @@ render() {
                                 </DropdownMenu>
                             </UncontrolledDropdown>
                             <NavItem>
-                                <NavLink href="/"  hidden={this.state.isUser ? true : false}>Login</NavLink>
+                                <NavLink href="/" style={{color:'white'}} hidden={this.state.isUser ? true : false}>Login</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/" onClick={this.handleLogout} hidden={this.state.isAdmin ? false: true}>Signout</NavLink>
+                                <NavLink href="/" onClick={this.handleLogout} style={{color:'white'}} hidden={this.state.isAdmin ? false: true}>Signout</NavLink>
                             </NavItem>
                         </Nav>
                     

@@ -211,7 +211,7 @@ getUserId = _ => {
 render() {
     return (
         <Container>
-            <Jumbotron>
+            <Jumbotron style={{backgroundColor:'white'}}>
             <h2 className="display-4">Welcome Back, {this.state.name} <FiUserCheck className="display-4"/></h2>
             <h5 >{moment(this.state.currentDate).format("DD MMM, YYYY")}</h5>
             <hr className="my-2" />
@@ -225,7 +225,7 @@ render() {
             </Jumbotron>
 
             <div hidden={this.state.isManagement ? false : true}>
-            <Jumbotron>
+            <Jumbotron style={{backgroundColor:'white'}}>
             <h2>My Actions</h2>
             <h6>My leave approvals</h6>
             <br></br>
@@ -262,7 +262,7 @@ render() {
             </div>   
         <Row>
         <Col xs="12" md="7" sm="7">
-        <Jumbotron >
+        <Jumbotron style={{backgroundColor:'white'}}>
         <h4 className="display-5">Things you might not know <FiHelpCircle/></h4>
         <div>
                 <Button color="info" onClick={this.toggleMessage3} style={{ marginBottom: '1rem',marginTop: '1rem'  }}>How to apply leave?</Button>
@@ -314,7 +314,7 @@ render() {
     </Col>
 
         <Col xs="12" md="5" sm="5">
-        <Jumbotron >
+        <Jumbotron style={{backgroundColor:'white'}}>
         <h2>Who's off</h2>
         <Row>
         <Col xs="6" md="6"><h6>{moment(this.state.currentDate).format("DD MMM, YYYY")}</h6></Col>

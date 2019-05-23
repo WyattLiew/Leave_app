@@ -68,8 +68,8 @@ router.get('/api/get_individual_employee/:id',function(req,res){
 router.post('/update_employee_new_details',function(req,res){
     // connect to postgres 
 
-    console.log(req.body.id);
-    console.log(req.body.updatedDate);
+    // console.log(req.body.id);
+    // console.log(req.body.updatedDate);
     // console.log(req.body.year);
     // console.log(req.body.leave1_1);
     // console.log(req.body.leave1_2);
@@ -133,11 +133,11 @@ router.post('/update_employee_new_details',function(req,res){
  */
 
 // get individual employee leave Balance
-router.get('/api/get_individual_employee_leave_balance/:id',function(req,res){
+router.get('/api/get_individual_employee_leave_balance/:id/:leaveType',function(req,res){
     // connect to postgres 
     pool.connect((err,client,done)=>{
         if(err) return console.error('error running query', err);
-            client.query('SELECT * FROM leave_balance WHERE employee_id=$1',[req.params.id], function(err, result) {
+            client.query('SELECT * FROM leave_balance t1 inner JOIN leave_type t2 on t1.leave_type_code = t2.leave_type_code WHERE employee_id=$1 AND t1.leave_type_code=$2',[req.params.id,req.params.leaveType], function(err, result) {
                 done();
                 if(err) {
                     return console.error('error running query', err);
@@ -149,6 +149,34 @@ router.get('/api/get_individual_employee_leave_balance/:id',function(req,res){
         }); 
     });  
 });
+
+// update leave for exsiting user
+router.post('/update_employee_exsiting_leave_balance',function(req,res){
+    // connect to postgres 
+
+    // console.log(req.body.id);
+    // console.log(req.body.updatedDate);
+    // console.log(req.body.year);
+    // console.log(req.body.balanceID);
+    // console.log(req.body.editLeave1_1);
+    // console.log(req.body.editLeave1_2);
+    // console.log(req.body.editLeave1_3);
+
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+        client.query('UPDATE leave_balance SET year_number=$1,updated=$2,leave_balance=$3,leave_taken=$4,leave_remaining=$5 WHERE employee_id =$6 AND leave_balance_id=$7',
+        [req.body.year,req.body.updatedDate,req.body.editLeave1_1,req.body.editLeave1_2,req.body.editLeave1_3,req.body.id,req.body.balanceID],function(err, result) {
+            done();
+            if(err) {
+                return console.error('error running query', err);
+            }
+        });
+    });
+    res.redirect('/');
+    //pool.end();
+});
+
+
 
 
 module.exports = router;

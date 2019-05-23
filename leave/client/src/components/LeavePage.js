@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import * as moment from 'moment';
 import SimpleReactValidator from 'simple-react-validator';
+import { IoIosAddCircleOutline } from "react-icons/io";
 import {
     Container,
     Form,
     FormGroup,
     Label,
-    Row,
     Col,
     Button,
     Input,
@@ -325,11 +325,10 @@ class LeavePage extends Component {
 render() {
     return (
        <Container>
-            <div><Row>
-            <Col xs="12" md="3"><Button color="primary" onClick={this.applyToggle}>New Leave Application</Button></Col>
-            <Col xs="12" md="4"><h2 className="leave_table_h2 " >Leave Balance</h2></Col>
-            </Row>
+            <div>
+            <Button color="primary" onClick={this.applyToggle}><IoIosAddCircleOutline style={{fontSize:'x-large'}}/> New Leave Application</Button>
             <br></br>
+            <h2 className="leave_table_h2 h2-align" >Leave Balance</h2>
                 <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
                 <Form onSubmit={this.handleSubmit}>
                     <ModalHeader toggle={this.toggle} charCode="Y">Apply for a leave</ModalHeader>

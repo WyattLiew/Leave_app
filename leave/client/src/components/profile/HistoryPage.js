@@ -184,8 +184,7 @@ class HistoryPage extends Component {
     render(){
         return (
             <Container>
-                <h2 className="history_table_h2">Leave History</h2>
-                <br></br>
+                <h2 className="history_table_h2 h2-align">Leave History</h2>
                 <Table className="leave_table" responsive>
                     <thead>
                         <tr>
