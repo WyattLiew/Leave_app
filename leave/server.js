@@ -46,6 +46,7 @@ app.get('/',function(req,res){
 app.use('',require('./routes/leaves'));
 app.use('',require('./routes/users'));
 app.use('',require('./routes/admin'));
+app.use('',require('./routes/mail.js'));
 
 const port = process.env.PORT || 5000;
 

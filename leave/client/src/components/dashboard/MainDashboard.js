@@ -30,10 +30,12 @@ class MainDashboard extends Component {
             takenByThisMonth:[],
             allOff:[],
 
+            // info
             collapse1: false,
             collapse2: false,
             collapse3: false,
             collapse4: false,
+
             name:'',
             balanceID:'',
             balance:'',
@@ -46,7 +48,16 @@ class MainDashboard extends Component {
             currentDate:new Date(),
             selectedMonth:moment(new Date()).format('MM YYYY'),
             selectedYear:moment(new Date()).format('YYYY'),
-            id:''
+            id:'',
+
+            // Set individual leave balance
+            individualLeavesBalance:[],
+            resetBalanceID:0,
+            resetEmployeeID:0,
+            resetRemaining:0,
+            resetTaken:0,
+            resetDaysCount:0,
+            reset_leave_type_code:0
         }
         this.toggleMessage1 = this.toggleMessage1.bind(this);
         this.toggleMessage2 = this.toggleMessage2.bind(this);
@@ -116,6 +127,8 @@ async rejectToggle(periodID,employeeID) {
         leavePeriodID: periodID,
         leaveApprovalCode: '3'
     }
+    await this.setState({resetEmployeeID:employeeID});
+    await this.getLeavesHistory(periodID);
 
     await fetch(`/api/update_leaves_taken_approval`,{
         method:'POST',
@@ -125,6 +138,91 @@ async rejectToggle(periodID,employeeID) {
     
     await setTimeout(() => window.location.reload(), 1500) ;
     }
+
+// Get leave History to setState
+getLeaveTakenHistory = _ =>{
+    this.state.indLeaves.map(leave =>
+        this.setState({
+            //employeeID: leave.employee_id,
+            reset_leave_type_code:leave.leave_type_code,
+            resetDaysCount:leave.number_of_days,
+            //leaveApproval:leave.leave_approval_code
+        },()=>{
+            this.getLeavesBalance(this.state.resetEmployeeID,this.state.reset_leave_type_code);
+            //console.log("ID "+this.state.employeeID,"LT "+this.state.leaveTypeCode,"DC "+this.state.daysCount, "LA "+this.state.leaveApproval);
+        })
+    )
+}
+
+// Get Leave Balance to setState
+setLeaveBalance = _ =>{
+
+this.state.individualLeavesBalance.map(leaves =>
+    this.setState({
+        resetBalanceID: leaves.leave_balance_id,
+        resetTaken: leaves.leave_taken,
+        resetRemaining: leaves.leave_remaining,
+        resetEmployeeID: leaves.employee_id
+    },()=>{
+        
+    //Calculation of Leave taken and remaining
+    var calTakenLeave = Number(this.state.resetTaken);
+    var calRemainingLeave = Number(this.state.resetRemaining);
+    var calDaysCount = Number(this.state.resetDaysCount);
+    var leaveTypeSelected = this.state.reset_leave_type_code;
+        
+    let totalDaysTaken = calTakenLeave - calDaysCount;
+    let totalDaysRemaining = calRemainingLeave + calDaysCount;
+        
+        if(leaveTypeSelected ===7 || leaveTypeSelected===3){
+            this.setState({
+                resetTaken: totalDaysTaken,
+                resetRemaining:0
+            },()=>{
+                var data = {
+                    employeeID: this.state.resetEmployeeID,
+                    balanceID: this.state.resetBalanceID,
+                    leaveType: this.state.reset_leave_type_code,
+                    days: this.state.resetDaysCount,
+                    currentDate: this.state.currentDate,
+                    taken: this.state.resetTaken,
+                    remaining:this.state.resetRemaining
+                };
+                fetch('/api/update_leaves_taken/',{
+                    method:'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                })
+            });
+        }else {
+            this.setState({
+                resetTaken: totalDaysTaken,
+                resetRemaining: totalDaysRemaining
+            },()=>{
+                var data = {
+                    employeeID: this.state.resetEmployeeID,
+                    balanceID: this.state.resetBalanceID,
+                    leaveType: this.state.reset_leave_type_code,
+                    days: this.state.resetDaysCount,
+                    currentDate: this.state.currentDate,
+                    taken: this.state.resetTaken,
+                    remaining:this.state.resetRemaining
+                };
+                fetch('/api/update_leaves_taken/',{
+                    method:'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                })
+            });
+        }
+    })
+)
+}
+
+/**
+ * 
+ *  Leave taken by months 
+ */
 
 // Selected Months handler
 handleChangeSelectedMonth(event) {
@@ -143,7 +241,7 @@ getBalance = _ =>{
             taken:leaves.leave_taken,
             remaining:leaves.leave_remaining
         },()=>{
-        console.log(this.state.name,"ID "+this.state.balanceID,"B "+this.state.balance,"R "+this.state.remaining, "T "+this.state.taken);
+        //console.log(this.state.name,"ID "+this.state.balanceID,"B "+this.state.balance,"R "+this.state.remaining, "T "+this.state.taken);
         })
     )
 }
@@ -152,6 +250,10 @@ checkLeave(){
     this.getLeaveByMonth(this.state.selectedMonth);
 }
 
+/**
+ * 
+ *  API
+ */
 
 // get all leave history
 getAllLeaves = _ => {
@@ -207,6 +309,24 @@ getUserId = _ => {
     }))
     .catch(err=>console.error(err));
 }
+
+// Get leave Balance
+getLeavesBalance = (employeeID,leaveType) => {
+    fetch(`http://localhost:3000/api/get_leaves_balance/${employeeID}/${leaveType}`)
+      .then(response => response.json())
+      .then(response => this.setState({ individualLeavesBalance: response.data},()=>{
+          this.setLeaveBalance();
+      })).catch(err=>console.error(err));
+}
+
+// get individual leave (for cancel purpose)
+getLeavesHistory = (leave_id) => {
+    fetch(`http://localhost:3000/api/get_leaves_taken_cancel/${leave_id}`)
+      .then(response => response.json())
+      .then(response => this.setState({ indLeaves: response.data},()=>{
+        this.getLeaveTakenHistory();
+      })).catch(err=>console.error(err));
+  }
     
 render() {
     return (
@@ -234,6 +354,7 @@ render() {
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Leave Type</th>
                             <th>Dates</th>
                             <th>Days</th>
                             <th>Reason</th>
@@ -245,6 +366,7 @@ render() {
                         <tbody key={leave.leave_period_id} id={leave.leave_period_id}>
                         <tr>
                             <td>{leave.employee_name}</td>
+                            <td>{leave.leave_type}</td>
                             <td>{moment(leave.leave_from_date).format("DD")} - {moment(leave.leave_to_date).format("DD MMM, YYYY")}</td>
                             <td>{leave.number_of_days + " day(s)"}</td>
                             <td>{leave.reason}</td>

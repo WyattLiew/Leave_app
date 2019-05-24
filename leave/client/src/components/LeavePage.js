@@ -38,7 +38,10 @@ class LeavePage extends Component {
           balance:0,
           taken:0,
           remaining:0,
-          id:0
+          id:0,
+
+          name:'',
+          leaveType:''
         }
 
         // validator
@@ -132,12 +135,14 @@ class LeavePage extends Component {
 
     this.state.leavesBalance.map(leaves =>
             this.setState({
+                name:leaves.employee_name.split(' ').join(''),
+                leaveType:leaves.leave_type,
                 balanceID: leaves.leave_balance_id,
                 balance:leaves.leave_balance,
                 taken:leaves.leave_taken,
                 remaining:leaves.leave_remaining
             },()=>{
-            console.log("ID "+this.state.balanceID,"B "+this.state.balance,"R "+this.state.remaining, "T "+this.state.taken);
+           // console.log("ID "+this.state.balanceID,"B "+this.state.balance,"R "+this.state.remaining, "T "+this.state.taken);
             })
         )
     }
@@ -239,6 +244,8 @@ class LeavePage extends Component {
                     balance:0
                 },()=>{
                     var data = {
+                        name:this.state.name,
+                        leave:this.state.leaveType,
                         balanceID: this.state.balanceID,
                         leaveType: this.state.leaveTypeValue,
                         fromDate: this.state.fromLeave,
@@ -256,7 +263,12 @@ class LeavePage extends Component {
                         method:'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(data)
-                    })
+                    });
+                    fetch('/send-mail',{
+                        method:'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
                 });
                 alert("Apply Successful...");
             }else{
@@ -265,6 +277,8 @@ class LeavePage extends Component {
                     remaining: totalDaysRemaining
                 },()=>{
                     var data = {
+                        name:this.state.name,
+                        leave:this.state.leaveType,
                         balanceID: this.state.balanceID,
                         leaveType: this.state.leaveTypeValue,
                         fromDate: this.state.fromLeave,
@@ -282,7 +296,12 @@ class LeavePage extends Component {
                         method:'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(data)
-                    })
+                    });
+                    fetch('/send-mail',{
+                        method:'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
                 });
                 alert("Apply Successful...");
             }
@@ -301,6 +320,7 @@ class LeavePage extends Component {
         //     console.log(data);
         //   })
           .then(response => this.setState({ leavesBalance: response.data},()=>{
+              console.log(this.state.leavesBalance);
               this.getBalance();
           })).catch(err=>console.error(err));
     }
@@ -432,6 +452,8 @@ render() {
                         </Col>
                     </FormGroup>
                      
+                    <Input type="text" name="name" value={this.state.name} readOnly hidden/>
+                    <Input type="text"  name="leave" value={this.state.leaveType} readOnly hidden/>
                     <Input type="number" step="any" name="taken" value={this.state.taken} readOnly hidden/>
                     <Input type="number" step="any" name="remaining" value={this.state.remaining} readOnly hidden/>
                     <Input type="text" name="currentDate" value={moment(this.state.currentDate).format("LL")} readOnly hidden/>

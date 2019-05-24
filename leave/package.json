@@ -17,9 +17,11 @@
     "body-parser": "*",
     "concurrently": "^4.1.0",
     "consolidate": "*",
+    "dotenv": "^8.0.0",
     "express": "*",
     "express-session": "^1.16.1",
     "express-validator": "^5.3.1",
+    "nodemailer": "^6.1.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pg": "*"

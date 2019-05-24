@@ -123,7 +123,7 @@ class HistoryPage extends Component {
             let totalDaysTaken = calTakenLeave - calDaysCount;
             let totalDaysRemaining = calRemainingLeave + calDaysCount;
                 
-                if(leaveTypeSelected ===7){
+                if(leaveTypeSelected ===7 || leaveTypeSelected===3){
                     this.setState({
                         taken: totalDaysTaken,
                         remaining:0

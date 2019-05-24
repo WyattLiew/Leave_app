@@ -55,7 +55,7 @@ router.get('/api/get_leaves_balance/:id/:leaveType',function(req,res){
     // connect to postgres  
     pool.connect((err,client,done)=>{
         if(err) return console.error('error running query', err);
-            client.query('SELECT employee_id,leave_balance_id,leave_balance,leave_taken,leave_remaining FROM leave_balance WHERE employee_id =$1 AND leave_type_code =$2',[req.params.id,req.params.leaveType], function(err, result) {
+            client.query('SELECT employee_id,leave_balance_id,leave_balance,leave_taken,leave_remaining,employee_name,leave_type FROM leave_balance t1 inner JOIN employee t2 on t1.employee_id = t2.id inner JOIN leave_type t3 on t1.leave_type_code = t3.leave_type_code WHERE t1.employee_id =$1 AND t1.leave_type_code =$2',[req.params.id,req.params.leaveType], function(err, result) {
                 done();
                 if(err) {
                     return console.error('error running query', err);
