@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "engines": {
+    "npm":"6.4.1",
+    "node":"11.3.0"
+  },
   "scripts": {
     "client-install": "npm install --prefix client",
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "npm install && cd client && npm install && npm run build"
   },
   "author": "WJ",
   "license": "ISC",
@@ -16,6 +21,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "*",
     "concurrently": "^4.1.0",
+    "connect-pg-simple": "^5.0.0",
     "consolidate": "*",
     "dotenv": "^8.0.0",
     "express": "*",

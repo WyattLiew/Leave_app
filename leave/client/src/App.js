@@ -17,11 +17,15 @@ class App extends Component {
     this.state = {
      // leaves:[]
     }
+    //this.connecToServer = this.connecToServer.bind(this);
   }
 
-  // componentDidUpdate() {
-  //   this.getLoginStatus();
-  // }
+  componentDidUpdate() {
+    //this.getLoginStatus();
+    //this.connecToServer();
+  }
+
+ // connecToServer() {    fetch('/');  }
 
   // getLeaves = _ => {
   //   fetch('http://localhost:3000/leaves')

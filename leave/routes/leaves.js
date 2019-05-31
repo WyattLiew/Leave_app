@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Pool } = require('pg');
 
+
 // DB Connect String   
 var connect = require('../config/keys').mongoURI;
 
@@ -295,16 +296,42 @@ router.get('/api/get_account_valification_admin',ensureAuthenticatedAdmin,functi
     console.log("Checking Account valification" );
 });
 
-// Check user status for nav bar
-router.get('/api/check_user_status',ensureAuthStatus,function(req,res){ 
-        console.log("Checking user status for nav bar");
-        return res.json();  
-           
-});
-// Check user status for Admin nav bar
-router.get('/api/check_user_status_admin',ensureAuthStatusAdmin,function(req,res){ 
+// Check user status for nav bar 
+router.get('/api/check_user_status',function(req,res){ 
+    data={
+        rows:[{
+        isUser:false,
+        isAdmin:false}]
+    }
     console.log("Checking user status for nav bar");
-    return res.json();         
+    if(req.isAuthenticated()){
+        if(!req.user.isAdmin && req.user.isUser){
+            data={
+                rows:[{
+                isUser:true,
+                isAdmin:false}]
+            }
+        console.log("Nav bar showing now");
+            return res.json({
+            data:data.rows
+        });
+        } else {
+            data={
+                rows:[{
+                isUser:true,
+                isAdmin:true}]
+            }
+            return res.json({
+                data:data.rows
+            });
+        }
+    } else {
+    console.log("Nav bar hidden");
+    return res.json({
+        data:data.rows
+    });
+    }
+       
 });
 
 // Check user id
@@ -360,34 +387,6 @@ function ensureAuthenticatedAdmin(req,res,next){
     } else {
         console.log("User Account is fail Authenticated");
        res.redirect('/');
-    }
-}
-
-// Access Control for nav bar
-function ensureAuthStatus(req,res,next){
-    if(req.isAuthenticated()){
-        if(!req.user.isAdmin && req.user.isUser){
-            // if(!req.user.isAuthenticated){
-            //     //
-            // }else{
-        console.log("Nav bar showing now");
-        return next();
-            //}
-        }
-    } else {
-    console.log("Nav bar hidden");
-    }
-}
-
-// Access Control for Admin nav bar
-function ensureAuthStatusAdmin(req,res,next){
-    if(req.isAuthenticated()){
-        if(req.user.isAdmin){
-        console.log("Admin Nav bar showing now");
-        return next();
-        }
-    } else {
-    console.log("Nav bar hidden");
     }
 }
 

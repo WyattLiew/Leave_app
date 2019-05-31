@@ -37,8 +37,8 @@ router.post('/send-mail',(req,res)=>{
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         auth: {
-            user:'stepdbsg@gmail.com',
-            pass:'step1234567890'                      
+            user:process.env.USER,
+            pass:process.env.PASSWORD                      
         }
     });
 

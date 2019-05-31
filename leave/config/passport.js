@@ -12,9 +12,10 @@ module.exports = function(passport){
     // Local Strategy
     passport.use(new LocalStrategy(function(username,password,done){
     
-        pool.connect();
-        pool.query('SELECT id,employee_email,password,isadmin,ismanagement FROM employee WHERE employee_email = $1',[username], function(err, result) {
-
+        pool.connect((err,client,complete)=>{
+            if(err) return console.error('error running query', err);
+        client.query('SELECT id,employee_email,password,isadmin,ismanagement FROM employee WHERE employee_email = $1',[username], function(err, result) {
+                complete();
                 if(err) {
                     return done(err);
                 }
@@ -39,6 +40,7 @@ module.exports = function(passport){
             });
         }
         });
+    });
     }));
 
     passport.serializeUser((user, done)=> {

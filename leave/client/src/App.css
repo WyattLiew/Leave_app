@@ -160,3 +160,8 @@ background-color: rgba(0, 0, 0, 0.15) !important;
     color:#fff !important;
     cursor: pointer;
 }
+
+/** Nav bar show in responsive mode */
+.mb-5 {
+    z-index: 1;
+}

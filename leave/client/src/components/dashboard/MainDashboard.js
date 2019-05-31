@@ -257,16 +257,15 @@ checkLeave(){
 
 // get all leave history
 getAllLeaves = _ => {
-    fetch(`http://localhost:3000/api/get_all_leaves_taken`)
-      .then(response => response.json())
+    fetch(`/api/get_all_leaves_taken`)
+      .then(response =>  response.json())
       .then(response => this.setState({ leavesTaken: response.data}))
       .catch(err=>console.error(err));
   }
 
   // get all leave by the months
 getLeaveByMonth = (month) => {
-    fetch(`http://localhost:3000/api/get_all_leaves_taken_by_month/${month}`)
-      .then(response => response.json())
+    fetch(`/api/get_all_leaves_taken_by_month/${month}`).then(response =>  response.json())
       .then(response => this.setState({ leavesTakenByMonth: response.data}))
       .catch(err=>console.error(err));
   }
@@ -291,7 +290,7 @@ getUserRoles = _ => {
 
 // Get individual leave balance
 getIndividualLeaves = (id) => {
-    fetch(`http://localhost:3000/api/get_main_leaves_balance/${id}/${1}`)
+    fetch(`/api/get_main_leaves_balance/${id}/${1}`)
       .then(response => response.json())
     //   .then(({data})=>{
     //     console.log(data);
@@ -312,7 +311,7 @@ getUserId = _ => {
 
 // Get leave Balance
 getLeavesBalance = (employeeID,leaveType) => {
-    fetch(`http://localhost:3000/api/get_leaves_balance/${employeeID}/${leaveType}`)
+    fetch(`/api/get_leaves_balance/${employeeID}/${leaveType}`)
       .then(response => response.json())
       .then(response => this.setState({ individualLeavesBalance: response.data},()=>{
           this.setLeaveBalance();
@@ -321,7 +320,7 @@ getLeavesBalance = (employeeID,leaveType) => {
 
 // get individual leave (for cancel purpose)
 getLeavesHistory = (leave_id) => {
-    fetch(`http://localhost:3000/api/get_leaves_taken_cancel/${leave_id}`)
+    fetch(`/api/get_leaves_taken_cancel/${leave_id}`)
       .then(response => response.json())
       .then(response => this.setState({ indLeaves: response.data},()=>{
         this.getLeaveTakenHistory();

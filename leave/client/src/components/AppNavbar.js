@@ -15,27 +15,36 @@ import {
 } from 'reactstrap';
 
 class AppNavbar extends Component {
-    constructor(props) {
-        super(props);
-    
-        this.toggle = this.toggle.bind(this);
-        this.handleLogout = this.handleLogout.bind(this);
+    constructor() {
+        super();
         this.state = {
             isHidden:true,
             isUser:false,
             isAdmin:false,
-            isOpen: false
-        };
+            isOpen: false,
+
+            userStatus:[]
+        }
+
+        this.toggle = this.toggle.bind(this);
+        this.handleLogout = this.handleLogout.bind(this);
       }
 
       componentDidMount() {
        this.getUserStatus();
-       this.getAdminStatus();
       }
 
       handleLogout() {
         this.getLogout();
       }
+
+    loadingStatus() {
+        this.state.userStatus.map(status => 
+            this.setState({
+                isUser:status.isUser,      
+                isAdmin:status.isAdmin        
+        },()=>{this.checkUserStatus(this.state.isUser,this.state.isAdmin)}));
+    }
 
     checkUserStatus(isUser,isAdmin) {
         if(!isAdmin && isUser){
@@ -43,9 +52,9 @@ class AppNavbar extends Component {
         }else if(isUser && isAdmin){
             this.setState({isHidden:true});
         }else{
-            this.getLogout();
-            this.setState({isHidden:true,isUser:false,isAdmin:false});
-            window.location.href="/";
+            //this.getLogout();
+            //this.setState({isHidden:true,isUser:false,isAdmin:false});
+            //window.location.href="/";
         }
     }
 
@@ -63,22 +72,11 @@ class AppNavbar extends Component {
     // Check user status for nav bar
     getUserStatus = _ => {
         fetch(`/api/check_user_status`)
-          .then(response => {
-              if(response){
-                this.setState({isUser: true,isAdmin:false},()=>{this.checkUserStatus(this.state.isUser,this.state.isAdmin)});
-              }
-        }).catch(err=>console.error("Error Here: "+err));
-    }
-
-    // Check user status for nav bar
-    getAdminStatus = _ => {
-        fetch(`/api/check_user_status_admin`)
-          .then(response => {
-              if(response){
-                this.setState({isUser: true,isAdmin:true},()=>{this.checkUserStatus(this.state.isUser,this.state.isAdmin)});
-              }
-        }).catch(err=>console.error("Error Here: "+err));
-    }
+            .then(response => response.json())
+            .then(response => this.setState({ userStatus: response.data},()=>{
+                this.loadingStatus();
+            })).catch(err=>console.error(err));
+        }
 
       toggle() {
         this.setState({
