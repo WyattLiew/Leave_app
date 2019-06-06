@@ -78,6 +78,37 @@ router.post('/register', function(req,res){
     }
 });
 
+// Reset Password Proccess
+router.post('/reset_password', function(req,res){
+    const password = req.body.resetPassword;
+    const password2 = req.body.resetPassowrd2;
+    const userId = req.body.resetUserId;
+
+        let newUser = {
+            password:password
+        };
+
+        bcrypt.genSalt(10, function(err, salt){
+            bcrypt.hash(newUser.password, salt, (err, hash)=>{
+                if(err){
+                    console.log(err);
+                }
+                newUser.password = hash;
+                console.log(newUser);
+                pool.connect((err,client,done)=>{
+                    if(err) return console.error('error running query', err);
+                client.query('UPDATE employee SET password =$1 WHERE id =$2',
+                [newUser.password,userId], function(err, result) {
+                    done();
+                        if(err) {
+                            return console.error('error running query', err);
+                        }
+                });
+            });    
+            });
+        });
+});
+
 // Modified employee details
 router.post('/modified_employee_details', function(req,res){
     const id = req.body.id;
@@ -171,6 +202,40 @@ router.get('/logout', function(req,res){
     req.logout();
     console.log('success','you are logged out');
     res.redirect('/');
+});
+
+// Check user id 
+router.get('/account_validation_checking_user_id/:email', function(req,res){
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+            client.query('SELECT id FROM employee WHERE employee_email =$1 ',[req.params.email], function(err, result) {
+                done();
+                if(err) {
+                    return console.error('error running query', err);
+                }else{
+                    return res.json({
+                    data:result.rows
+                });
+            }
+        }); 
+    });
+});
+
+// Check user validation pin number
+router.get('/account_validation_checking/:email/:pin', function(req,res){
+    pool.connect((err,client,done)=>{
+        if(err) return console.error('error running query', err);
+            client.query('SELECT valid FROM account_validation WHERE reset_email =$1 AND pin =$2 ',[req.params.email,req.params.pin], function(err, result) {
+                done();
+                if(err) {
+                    return console.error('error running query', err);
+                }else{
+                    return res.json({
+                    data:result.rows
+                });
+            }
+        }); 
+    });
 });
 
 module.exports = router;

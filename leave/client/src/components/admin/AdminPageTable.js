@@ -77,16 +77,16 @@ class AdminPageTable extends Component {
 
 // Admin check handler
 handleChangeCheckAdmin = () => {
-  console.log("1"+this.state.editIsAdmin);
+  //console.log("1"+this.state.editIsAdmin);
   this.setState({
-      editIsAdmin: !this.state.editIsAdmin,
-  },()=> console.log(this.state.editIsAdmin));
+      editIsAdmin: !this.state.editIsAdmin
+  });
 }
 
 // Management check handler
 handleChangeCheckManagement = () => {
     this.setState({
-        editIsManagement: !this.state.editIsManagement,
+        editIsManagement: !this.state.editIsManagement
     });
 }
 

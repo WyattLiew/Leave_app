@@ -105,7 +105,6 @@ render() {
                                 <DropdownMenu>
                                 <DropdownItem header>Personal</DropdownItem>
                                 <DropdownItem href="/HistoryPage">History</DropdownItem>
-                                <DropdownItem>Settings</DropdownItem>
                                 <DropdownItem divider />
                                 <DropdownItem onClick={this.handleLogout}>Signout</DropdownItem>
                                 </DropdownMenu>

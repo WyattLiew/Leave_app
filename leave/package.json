@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "engines": {
-    "npm":"6.4.1",
-    "node":"11.3.0"
+    "npm": "6.4.1",
+    "node": "11.3.0"
   },
   "scripts": {
     "client-install": "npm install --prefix client",
@@ -19,17 +19,17 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "body-parser": "*",
+    "body-parser": "^1.19.0",
     "concurrently": "^4.1.0",
     "connect-pg-simple": "^5.0.0",
     "consolidate": "*",
     "dotenv": "^8.0.0",
-    "express": "*",
+    "express": "^4.17.1",
     "express-session": "^1.16.1",
     "express-validator": "^5.3.1",
-    "nodemailer": "^6.1.1",
+    "nodemailer": "^6.2.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "pg": "*"
+    "pg": "^7.11.0"
   }
 }

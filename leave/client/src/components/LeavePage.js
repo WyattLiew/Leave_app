@@ -150,8 +150,8 @@ class LeavePage extends Component {
 
     // Calculate days applied
     getDaysCount = _ =>{
-        console.log(this.state.fromLeave);
-        console.log(this.state.toLeave);
+        //console.log(this.state.fromLeave);
+        //console.log(this.state.toLeave);
 
         this.setState({            
             daysCount: 0
@@ -161,19 +161,19 @@ class LeavePage extends Component {
         const diff = timeEnd.diff(startDate);
         const diffDuration = moment.duration(diff);
 
-        console.log("StartDate"+startDate);
-        console.log("EndDate"+timeEnd);
-        console.log("Total Duration in millis:", diffDuration.asMilliseconds());
-        console.log("Days:", diffDuration.days());
-        console.log("Years:", diffDuration.years());
-        console.log("Months:", diffDuration.months());
-        console.log("Hours:", diffDuration.hours());
-        console.log("Minutes:", diffDuration.minutes());
-        console.log("Seconds:", diffDuration.seconds());
-        console.log("Months:", startDate.format('M'));
+        // console.log("StartDate"+startDate);
+        // console.log("EndDate"+timeEnd);
+        // console.log("Total Duration in millis:", diffDuration.asMilliseconds());
+        // console.log("Days:", diffDuration.days());
+        // console.log("Years:", diffDuration.years());
+        // console.log("Months:", diffDuration.months());
+        // console.log("Hours:", diffDuration.hours());
+        // console.log("Minutes:", diffDuration.minutes());
+        // console.log("Seconds:", diffDuration.seconds());
+        // console.log("Months:", startDate.format('M'));
        
         var totalDays = diffDuration.days();
-        console.log("Days:", moment(startDate).days());
+        //console.log("Days:", moment(startDate).days());
 
         //this.getBalance();
 
@@ -230,9 +230,9 @@ class LeavePage extends Component {
             let totalDaysRemaining = calRemainingLeave - calDaysCount;
             
             
-            console.log("Taken"+totalDaysTaken);
-            console.log("Remaining"+totalDaysRemaining);
-            console.log("leave_type "+leaveTypeSelected);
+            // console.log("Taken"+totalDaysTaken);
+            // console.log("Remaining"+totalDaysRemaining);
+            // console.log("leave_type "+leaveTypeSelected);
             
             if(calDaysCount>calRemainingLeave && leaveTypeSelected !=="7" && leaveTypeSelected !=="3") {
                 event.preventDefault();
@@ -320,7 +320,7 @@ class LeavePage extends Component {
         //     console.log(data);
         //   })
           .then(response => this.setState({ leavesBalance: response.data},()=>{
-              console.log(this.state.leavesBalance);
+              //console.log(this.state.leavesBalance);
               this.getBalance();
           })).catch(err=>console.error(err));
     }
